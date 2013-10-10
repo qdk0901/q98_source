@@ -1,0 +1,23 @@
+export PATH=$PATH:~/projects/q9701/4.2.2_r1/out/host/linux-x86/bin/
+
+rm -rf wld_images
+mkdir wld_images
+
+make rk3188_q98_q97s_defconfig
+make -j4 kernel.img 
+mv kernel.img wld_images/kernel_q98_q97s.img
+
+make rk3188_q910_hsd101_defconfig
+make -j4 kernel.img 
+mv kernel.img wld_images/kernel_q910_hsd101.img
+
+make rk3188_q910_ipad3_defconfig
+make -j4 kernel.img 
+mv kernel.img wld_images/kernel_q910_ipad3.img
+
+#mkbootimg --kernel wld_images/kernel_q98_q97s.img --ramdisk recovery.img --output wld_images/recovery_q98_q97s_nocrc.img
+#./mkkrnlimg wld_images/recovery_q98_q97s_nocrc.img wld_images/recovery_q98_q97s.img
+#mkbootimg --kernel wld_images/kernel_q910_hsd101.img --ramdisk recovery.img --output wld_images/recovery_q910_hsd101_nocrc.img
+#./mkkrnlimg wld_images/recovery_q910_hsd101_nocrc.img wld_images/recovery_q910_hsd101.img
+#mkbootimg --kernel wld_images/kernel_q910_ipad3.img --ramdisk recovery.img --output wld_images/recovery_q910_ipad3_nocrc.img
+#./mkkrnlimg wld_images/recovery_q910_ipad3_nocrc.img wld_images/recovery_q910_ipad3.img
