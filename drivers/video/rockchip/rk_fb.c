@@ -1539,10 +1539,15 @@ int rk_fb_register(struct rk_lcdc_device_driver *dev_drv,
 			fb_inf->fb[0]->fbops->fb_pan_display(&(fb_inf->fb[0]->var), fb_inf->fb[0]);
 		}
 #else
-		if(fb_prepare_logo(fb_inf->fb[0], FB_ROTATE_UR)) {
+
+		int rot = FB_ROTATE_UR;
+		if (board_rotate_screen())
+			rot = FB_ROTATE_UD;
+		
+		if(fb_prepare_logo(fb_inf->fb[0], rot)) {
 			/* Start display and show logo on boot */
 			fb_set_cmap(&fb_inf->fb[0]->cmap, fb_inf->fb[0]);
-			fb_show_logo(fb_inf->fb[0], FB_ROTATE_UR);
+			fb_show_logo(fb_inf->fb[0], rot);
 			fb_inf->fb[0]->fbops->fb_pan_display(&(fb_inf->fb[0]->var), fb_inf->fb[0]);
 		}
 #endif

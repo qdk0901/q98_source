@@ -167,7 +167,7 @@ static void tp_exit_init(int state)
 
 #if defined(CONFIG_TOCHSCREEN_GT9XX_IIC)
 #define TOUCH_RESET_PIN RK30_PIN0_PB6
-#define TOUCH_INT_PIN   RK30_PIN1_PB7
+#define TOUCH_INT_PIN   RK30_PIN0_PD7
 
 static int goodix_init_platform_hw(void)
 {

@@ -172,6 +172,7 @@ static void q98_ipad2_override()
 	lcd_density = 160;
 	hwrotation = 90;
 	
+	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "anx6345");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "laibao_touch");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "vtl_ts");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "ft5506_q910");
@@ -662,6 +663,14 @@ int get_host_drv_pin()
 int get_otg_drv_pin()
 {
 	return RK30_PIN3_PD5;
+}
+
+int board_rotate_screen()
+{
+	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3)
+		return 1;
+	
+	return 0;		
 }
 
 extern void camera_dynamic_init();

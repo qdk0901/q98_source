@@ -64,7 +64,7 @@ extern u16 total_len;
 #define GTP_DRIVER_SEND_CFG   1     
 #define GTP_HAVE_TOUCH_KEY    1
 #define GTP_POWER_CTRL_SLEEP  1
-#define GTP_ICS_SLOT_REPORT   0     
+#define GTP_ICS_SLOT_REPORT   1     
 
 #define GTP_AUTO_UPDATE       1 
 // firmware as an array instead of a bin file to search.
@@ -75,9 +75,9 @@ extern u16 total_len;
 #define GTP_CREATE_WR_NODE    1     
 #define GTP_SLIDING_WAKEUP    0     
 
-#define GTP_DEBUG_ON          1
+#define GTP_DEBUG_ON          0
 #define GTP_DEBUG_ARRAY_ON    0
-#define GTP_DEBUG_FUNC_ON     1
+#define GTP_DEBUG_FUNC_ON     0
 
 //*************************** PART2:TODO define **********************************
 // STEP_1(REQUIRED): Define Configuration Information Group(s)

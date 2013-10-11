@@ -594,5 +594,6 @@ int board_rk616_i2c_channel();
 int board_audio_path_fix();
 int get_host_drv_pin();
 int get_otg_drv_pin();
+int board_rotate_screen();
 
 #endif
