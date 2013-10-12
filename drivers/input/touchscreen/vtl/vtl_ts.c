@@ -255,7 +255,16 @@ static void vtl_report_xy_coord(struct input_dev *input_dev,union ts_xy_data *xy
 
 		x = (xy_data->point[id].xhi<<4)|(xy_data->point[id].xlo&0xF);
 		y = (xy_data->point[id].yhi<<4)|(xy_data->point[id].ylo&0xF);
-		
+
+		#if 0
+			{
+				printk("ID:       %d\n", xy_data->point[id].id);
+				printk("status:   %d\n", xy_data->point[id].status);
+				printk("X:        %d\n", x);
+				printk("Y:        %d\n", y);
+			}
+		#endif
+				
 		if (ts->config_info.exchange_x_y_flag) {
 			int tmp;
 			tmp = x;
@@ -268,14 +277,6 @@ static void vtl_report_xy_coord(struct input_dev *input_dev,union ts_xy_data *xy
 		if (ts->config_info.revert_y_flag)
 			y = ts->config_info.screen_max_y - y;
 
-		#if 0
-			{
-				printk("ID:       %d\n", xy_data->point[id].id);
-				printk("status:   %d\n", xy_data->point[id].status);
-				printk("X:        %d\n", x);
-				printk("Y:        %d\n", y);
-			}
-		#endif
 
 		#if 1
 			input_mt_slot(input_dev, xy_data->point[id].id - 1);

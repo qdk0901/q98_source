@@ -23,8 +23,8 @@ enum
 	FORCE_USE_CODEC_RT3261,
 };
 
-static int board_type = BOARD_Q910_101;
-static int panel_type = PANEL_HSD101;
+static int board_type = BOARD_Q97S_IPAD3;
+static int panel_type = PANEL_LG97X03;
 static int force_use_codec = FORCE_USE_NONE;
 
 int get_board_type()
@@ -165,6 +165,7 @@ static void q97s_ipad2_override()
 	rk_headset_info.headset_in_type = HEADSET_IN_LOW;
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_HIGH;
+	
 }
 
 static void q98_ipad2_override()
@@ -381,7 +382,7 @@ static void q910_101_override()
 	hwrotation = 270;
 	
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "laibao_touch");
-	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "vtl_ts");
+	//remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "vtl_ts");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), GTP_I2C_NAME);
 	remove_i2c_info(i2c4_info, ARRAY_SIZE(i2c4_info), "rt3261");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "cat66121_hdmi");
@@ -408,6 +409,15 @@ static void q910_101_override()
 	
 	signed char orientation[9] = {0, -1, 0, -1, 0, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
+	
+	if (panel_type == PANEL_LG97X02 || panel_type == PANEL_HSD97X02) {
+		//vtl_ts_config_info.screen_max_x = 1024;
+		vtl_ts_config_info.screen_max_y = 1185;
+		vtl_ts_config_info.revert_x_flag = 0;
+		//vtl_ts_config_info.revert_y_flag = 0;
+		//vtl_ts_config_info.exchange_x_y_flag = 0;
+		hwrotation = 90;
+	}
 }
 
 //q910 ipad3
@@ -669,7 +679,12 @@ int board_rotate_screen()
 {
 	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3)
 		return 1;
-	
+		
+	if (board_type == BOARD_Q910_101) {
+		if (panel_type == PANEL_LG97X02 || panel_type == PANEL_HSD97X02)
+			return 1;	
+	}
+
 	return 0;		
 }
 
