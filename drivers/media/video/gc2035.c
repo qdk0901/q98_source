@@ -687,7 +687,7 @@ static struct rk_sensor_reg sensor_init_data[] =
 
 	{0xc8 , 0x00},//close scaler
 	{0x99 , 0x22},// 1/2 subsample
-	{0x9a , 0x06},
+	{0x9a , 0x07},//qdk--0x06},
 	{0x9b , 0x00},
 	{0x9c , 0x00},
 	{0x9d , 0x00},
@@ -778,7 +778,7 @@ static struct rk_sensor_reg sensor_fullres_lowfps_data[] ={
 	{0xf7 , 0x17},
 
 	{0x99 , 0x11}, // disable sambsample
-	{0x9a , 0x06},
+	{0x9a , 0x07}, //qdk--0x06},
 	{0x9b , 0x00},
 	{0x9c , 0x00},
 	{0x9d , 0x00},
@@ -812,7 +812,7 @@ static struct rk_sensor_reg sensor_preview_data[] =
 
 	{0xc8 , 0x00},//close scaler
 	{0x99 , 0x22},// 1/2 subsample
-	{0x9a , 0x06},
+	{0x9a , 0x07},//qdk--0x06},
 	{0x9b , 0x00},
 	{0x9c , 0x00},
 	{0x9d , 0x00},
@@ -1301,7 +1301,7 @@ static int sensor_mirror_cb (struct i2c_client *client, int mirror)
 	char val;
 	int err = 0;
 	
-	SENSOR_DG("mirror: %d",mirror);
+	printk("-mirror: %d",mirror);
 	if (mirror) {
 		sensor_write(client, 0xfe, 0);
 		err = sensor_read(client, 0x17, &val);
@@ -1338,7 +1338,7 @@ static int sensor_flip_cb(struct i2c_client *client, int flip)
 	char val;
 	int err = 0;	
 
-	SENSOR_DG("flip: %d",flip);
+	printk("-flip: %d",flip);
 	if (flip) {
 		
 		sensor_write(client, 0xfe, 0);
@@ -1366,6 +1366,7 @@ static int sensor_v4l2ctrl_flip_cb(struct soc_camera_device *icd, struct sensor_
 {
 	struct i2c_client *client = to_i2c_client(to_soc_camera_control(icd));
 
+	printk("@@@@ %d\n", ctrl_info->cur_value);
 	if (sensor_flip_cb(client,ext_ctrl->value) != 0)
 		SENSOR_TR("sensor_flip failed, value:0x%x",ext_ctrl->value);
 	

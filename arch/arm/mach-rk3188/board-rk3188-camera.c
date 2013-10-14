@@ -269,6 +269,9 @@ void camera_dynamic_init()
 		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
 		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
 #endif
+		
+		if (board_type == BOARD_FINE9)
+			new_camera[1].mirror = 0x3; // upsize down
 	}
 }
 #endif /* CONFIG_VIDEO_RK29 */

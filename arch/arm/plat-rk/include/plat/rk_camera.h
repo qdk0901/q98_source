@@ -604,7 +604,6 @@ struct rkcamera_platform_data {
                                      .....
                                   */
     int mclk_rate;       /* MHz : 24/48 */                                  
-                      
 };
 
 struct rk29camera_platform_data {
