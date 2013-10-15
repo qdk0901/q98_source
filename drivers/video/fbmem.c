@@ -34,6 +34,7 @@
 #include <linux/fb.h>
 
 #include <asm/fb.h>
+#include <plat/board.h>
 
 
     /*
@@ -512,8 +513,13 @@ static int fb_show_logo_line(struct fb_info *info, int rotate,
 		image.dy = y;
 	}
 #else
-	image.dx = 0;
-	image.dy = y;
+	if (board_custom_boot_logo()) {
+		image.dx = (info->var.xres / 2)-(logo->width) / 2;
+		image.dy = (info->var.yres / 2)-(logo->height) / 2;
+	} else {
+		image.dx = 0;
+		image.dy = y;
+	}
 #endif
 	image.width = logo->width;
 	image.height = logo->height;
@@ -688,8 +694,12 @@ int fb_show_logo(struct fb_info *info, int rotate)
 
 	}
 #else
+	int n = num_online_cpus();
+	if (board_custom_boot_logo())
+		n = 1;
+		
 	y = fb_show_logo_line(info, rotate, fb_logo.logo, 0,
-			      num_online_cpus());
+			      n);
 #endif
 	y = fb_show_extra_logos(info, y, rotate);
 

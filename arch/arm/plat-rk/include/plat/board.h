@@ -595,5 +595,6 @@ int board_audio_path_fix();
 int get_host_drv_pin();
 int get_otg_drv_pin();
 int board_rotate_screen();
+int board_custom_boot_logo();
 
 #endif

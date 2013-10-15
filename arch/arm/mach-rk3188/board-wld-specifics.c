@@ -688,6 +688,11 @@ int board_rotate_screen()
 	return 0;		
 }
 
+int board_custom_boot_logo()
+{
+	return 1;	
+}
+
 extern void camera_dynamic_init();
 
 static void usb_detect_init()

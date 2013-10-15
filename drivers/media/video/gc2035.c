@@ -1301,7 +1301,7 @@ static int sensor_mirror_cb (struct i2c_client *client, int mirror)
 	char val;
 	int err = 0;
 	
-	printk("-mirror: %d",mirror);
+	SENSOR_DG("mirror: %d",mirror);
 	if (mirror) {
 		sensor_write(client, 0xfe, 0);
 		err = sensor_read(client, 0x17, &val);
@@ -1338,7 +1338,7 @@ static int sensor_flip_cb(struct i2c_client *client, int flip)
 	char val;
 	int err = 0;	
 
-	printk("-flip: %d",flip);
+	SENSOR_DG("flip: %d",flip);
 	if (flip) {
 		
 		sensor_write(client, 0xfe, 0);
@@ -1366,7 +1366,6 @@ static int sensor_v4l2ctrl_flip_cb(struct soc_camera_device *icd, struct sensor_
 {
 	struct i2c_client *client = to_i2c_client(to_soc_camera_control(icd));
 
-	printk("@@@@ %d\n", ctrl_info->cur_value);
 	if (sensor_flip_cb(client,ext_ctrl->value) != 0)
 		SENSOR_TR("sensor_flip failed, value:0x%x",ext_ctrl->value);
 	
