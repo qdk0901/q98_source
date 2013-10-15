@@ -48,7 +48,7 @@ static int codec_write(struct i2c_client *client, unsigned int reg,
 	data[0] = reg;
 	data[1] = value & 0xff;
 
-	printk("%s: reg=0x%x value=0x%x\n",__func__,reg,value);
+	//printk("%s: reg=0x%x value=0x%x\n",__func__,reg,value);
 	if (i2c_master_send(client, data, 2) == 2)
 		return 0;
 	else
@@ -93,13 +93,13 @@ struct es8323_reg {
 };
 
 static struct es8323_reg init_data[] = {
-	{0x08, 0x00},
 	{0x02, 0xF3},
 	{0x00, 0x05}, //Set chip to play&record mode
 	{0x01, 0x40}, //Power up analog and lbias
 	{0x03, 0x00}, //Power up ADC /Analog input
 	{0x04, 0x0C}, //Enable LOUT/ROUT
-	{0x0A, 0x50}, //Select Analog input channel for ADC, (Lin1/Rin1)
+	{0x0a, 0xf0},  //ADC INPUT=LIN2/RIN2
+	{0x0b, 0x82},  //ADC INPUT=LIN2/RIN2 //82
 	{0x09, 0x88}, //Select analog input PGA gain for ADC, 24bB
 	{0x0c, 0x1F}, //PCM- 16bit
 	{0x0d, 0x02}, //MCLK/RCLK ratio for ADC, 11.2M 256FS
@@ -107,13 +107,12 @@ static struct es8323_reg init_data[] = {
 	{0x11, 0x00}, //ADC digital volume 0db
 	
 	//ALC control 
-	/*
-	{0x12, 0xe2},
+	{0x12, 0xea}, // ALC stereo MAXGAIN: 35.5dB,  MINGAIN: +6dB (Record Volume increased!)
 	{0x13, 0xc0},
-	{0x14, 0x12},
+	{0x14, 0x05},
 	{0x15, 0x06},
-	{0x16, 0xc3},
-	*/
+	{0x16, 0x53},
+
 	{0x17, 0x1F}, // SFI for DAC ,  PCM -16bit
 	{0x18, 0x02}, // MCLK/RCLK ratio for DAC, 11.2M 256FS
 	{0x1A, 0x00}, // DAC digital volume
@@ -134,6 +133,8 @@ static struct es8323_reg init_data[] = {
 	
 	//Power up DEM and STM
 	{0x02, 0x00},
+	{0x08, 0x00},   //ES8388 salve
+	{0x2B, 0x80},
 	
 };
 #define ES8323_INIT_REG_NUM ARRAY_SIZE(init_data)
@@ -146,7 +147,72 @@ static int es8323_reg_init(struct i2c_client *client)
 		codec_write(client, init_data[i].reg_index,
 				init_data[i].reg_value);
 
+	for (i = 0; i < ES8323_INIT_REG_NUM; i++) {
+		//printk("codec_read[0x%02x] = %02x\n", init_data[i].reg_index, codec_read(client, init_data[i].reg_index));	
+	}
 	return 0;
+}
+
+static int es8323_on_init(struct i2c_client *client)
+{
+codec_write(client, 0x02,0xf3);
+codec_write(client, 0x2B,0x80);
+codec_write(client, 0x08,0x00);   //ES8388 salve  
+codec_write(client, 0x00,0x32);   //
+codec_write(client, 0x01,0x72);   //PLAYBACK & RECORD Mode,EnRefr=1
+codec_write(client, 0x03,0x59);   //pdn_ana=0,ibiasgen_pdn=0
+codec_write(client, 0x05,0x00);   //pdn_ana=0,ibiasgen_pdn=0
+codec_write(client, 0x06,0xc3);   //pdn_ana=0,ibiasgen_pdn=0 
+codec_write(client, 0x09,0x88);  //ADC L/R PGA =  +24dB
+//----------------------------------------------------------------------------------------------------------------
+codec_write(client, 0x0a,0xf0);  //ADC INPUT=LIN2/RIN2
+codec_write(client, 0x0b,0x82);  //ADC INPUT=LIN2/RIN2 //82
+//-----------------------------------------------------------------------------------------------------------------
+codec_write(client, 0x0C,0x1F);  //I2S-24BIT
+codec_write(client, 0x0d,0x02);  //MCLK/LRCK=256 
+codec_write(client, 0x10,0x00);  //ADC Left Volume=0db
+codec_write(client, 0x11,0x00);  //ADC Right Volume=0db
+codec_write(client, 0x12,0xea); // ALC stereo MAXGAIN: 35.5dB,  MINGAIN: +6dB (Record Volume increased!)
+codec_write(client, 0x13,0xc0);
+codec_write(client, 0x14,0x05);
+codec_write(client, 0x15,0x06);
+codec_write(client, 0x16,0x53);  
+codec_write(client, 0x17,0x1F);  //I2S-16BIT
+codec_write(client, 0x18,0x02);
+codec_write(client, 0x1A,0x00);  //DAC VOLUME=0DB
+codec_write(client, 0x1B,0x00);
+                /*
+                codec_write(client, 0x1E,0x01);    //for 47uF capacitors ,15db Bass@90Hz,Fs=44100
+                codec_write(client, 0x1F,0x84);
+                codec_write(client, 0x20,0xED);
+                codec_write(client, 0x21,0xAF);
+                codec_write(client, 0x22,0x20);
+                codec_write(client, 0x23,0x6C);
+                codec_write(client, 0x24,0xE9);
+                codec_write(client, 0x25,0xBE);
+                */
+codec_write(client, 0x26,0x12);  //Left DAC TO Left IXER
+codec_write(client, 0x27,0x90);  //Left DAC TO Left MIXER
+codec_write(client, 0x28,0x38);
+codec_write(client, 0x29,0x38);
+codec_write(client, 0x2A,0xb8);
+codec_write(client, 0x02,0x00); //aa //START DLL and state-machine,START DSM 
+codec_write(client, 0x08,0x00);   //ES8388 salve
+codec_write(client, 0x19,0x02);  //SOFT RAMP RATE=32LRCKS/STEP,Enable ZERO-CROSS CHECK,DAC MUTE
+codec_write(client, 0x04,0x0c);   //pdn_ana=0,ibiasgen_pdn=0  
+msleep(100);
+codec_write(client, 0x2e,0x00); 
+codec_write(client, 0x2f,0x00);
+codec_write(client, 0x30,0x08); 
+codec_write(client, 0x31,0x08);
+msleep(200);
+codec_write(client, 0x30,0x0f); 
+codec_write(client, 0x31,0x0f);
+msleep(200);
+codec_write(client, 0x30,0x18); 
+codec_write(client, 0x31,0x18);
+msleep(100);
+codec_write(client, 0x04,0x2c);   //pdn_ana=0,ibiasgen_pdn=0 		
 }
 
 static int es8323_reset(struct i2c_client *client)
@@ -161,6 +227,7 @@ void es8323_on(void)
 		printk("enter %s\n",__func__);
 		es8323_reset(i2c_client);
 		es8323_reg_init(i2c_client);
+		//es8323_on_init(i2c_client);
 		status = MODEM_ON;
 	}
 }

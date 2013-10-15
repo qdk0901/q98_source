@@ -564,6 +564,8 @@ static void q98_v2_ipad3_override()
 	gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
 	
 	strcpy(rk_device_headset.name, "removed"); //FIXME
+	
+	vtl_ts_config_info.revert_x_flag = 1;
 }
 
 //fine9
@@ -690,7 +692,7 @@ int board_rotate_screen()
 
 int board_custom_boot_logo()
 {
-	return 1;	
+	return 0;	
 }
 
 extern void camera_dynamic_init();
