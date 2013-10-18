@@ -58,7 +58,9 @@ static int __init board_type_setup(char *str)
 	else if (!strcmp(str, "q98_v2_ipad2"))
 		board_type = BOARD_Q98_V2_IPAD2;
 	else if (!strcmp(str, "find9"))
-      board_type = BOARD_FINE9;
+    board_type = BOARD_FINE9;
+  else if (!strcmp(str, "q98_v3"))
+  	board_type = BOARD_Q98_V3;
 		
 	printk("###############################[board_type = %s]##############################\n", str);
 	return 0;
@@ -381,10 +383,13 @@ static void q910_101_override()
 	lcd_density = 160;
 	hwrotation = 270;
 	
+	//force_use_codec = FORCE_USE_CODEC_RT3261;
+	
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "laibao_touch");
 	//remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "vtl_ts");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), GTP_I2C_NAME);
-	remove_i2c_info(i2c4_info, ARRAY_SIZE(i2c4_info), "rt3261");
+	if (force_use_codec != FORCE_USE_CODEC_RT3261)
+		remove_i2c_info(i2c4_info, ARRAY_SIZE(i2c4_info), "rt3261");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "cat66121_hdmi");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "anx6345");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "ft5506_q910_ipad3");
@@ -627,13 +632,63 @@ static void fine9_override()
   rk29_bl_info.max_brightness = 255;
 }
 
+// q98v3 for gsd and chuangqi
+static void q98v3_override()
+{
+	lcd_density = 320;
+	hwrotation = 270;
+	//force_use_codec = FORCE_USE_CODEC_RT3261;
+	
+	//remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "vtl_ts");
+	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), GTP_I2C_NAME);
+	
+	if (force_use_codec != FORCE_USE_CODEC_RT3261)
+		remove_i2c_info(i2c4_info, ARRAY_SIZE(i2c4_info), "rt3261");
+		
+	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "cat66121_hdmi");
+	remove_i2c_info(i2c4_info, ARRAY_SIZE(i2c4_info), "rk616");
+	//remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "rk616");
+	
+	rk29_bl_info.io_init = rk29_backlight_io_init_q910_ipad3;
+	rk29_bl_info.io_deinit = rk29_backlight_io_deinit_q910_ipad3;
+	rk29_bl_info.pwm_suspend = rk29_backlight_pwm_suspend_q910_ipad3;
+	rk29_bl_info.pwm_resume = rk29_backlight_pwm_resume_q910_ipad3;
+	rk29_bl_info.bl_ref = 0;
+	
+	lcdc0_screen_info.io_init = rk_fb_io_init_q910_ipad3;
+	lcdc0_screen_info.io_disable = rk_fb_io_disable_q910_ipad3;
+	lcdc0_screen_info.io_enable = rk_fb_io_enable_q910_ipad3;
+	
+#if defined(CONFIG_LCDC1_RK3188)
+	lcdc1_screen_info.io_init = rk_fb_io_init_q910_ipad3;
+	lcdc1_screen_info.io_disable = rk_fb_io_disable_q910_ipad3;
+	lcdc1_screen_info.io_enable = rk_fb_io_enable_q910_ipad3;
+#endif
+	
+	rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
+	rk_headset_info.headset_in_type = HEADSET_IN_LOW;
+	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
+	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
+	
+	gpio_request(RK30_PIN0_PA1, NULL);
+	gpio_direction_input(RK30_PIN0_PA1);
+	gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
+	
+	strcpy(rk_device_headset.name, "removed"); //FIXME
+	
+	vtl_ts_config_info.revert_x_flag = 1;
+	
+	signed char orientation[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
+	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
+} 
+
 int board_use_rk616_codec()
 {
 	if (force_use_codec == FORCE_USE_CODEC_RT3261)
 		return 0;
 	// if MT815 is used, return 0 here
 	if (board_type == BOARD_Q910_101 || board_type == BOARD_Q910_IPAD2 || board_type == BOARD_Q910_IPAD3 || board_type == BOARD_Q910_89 ||
-		board_type == BOARD_Q98_V2_IPAD3 || board_type == BOARD_Q98_V2_IPAD2 || board_type == BOARD_FINE9)
+		board_type == BOARD_Q98_V2_IPAD3 || board_type == BOARD_Q98_V2_IPAD2 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V3)
 		return 1;
 	
 	return 0;
@@ -642,7 +697,7 @@ int board_use_rk616_codec()
 int board_has_rk616()
 {
 	if (board_type == BOARD_Q910_101 || board_type == BOARD_Q910_IPAD2 || board_type == BOARD_Q910_IPAD3 || board_type == BOARD_Q910_89 ||
-		board_type == BOARD_Q98_V2_IPAD3 || board_type == BOARD_Q98_V2_IPAD2 || board_type == BOARD_FINE9)
+		board_type == BOARD_Q98_V2_IPAD3 || board_type == BOARD_Q98_V2_IPAD2 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V3)
 		return 1;
 		
 	return 0;	
@@ -666,7 +721,7 @@ int board_audio_path_fix()
 
 int get_host_drv_pin()
 {
-	if (board_type == BOARD_FINE9)
+	if (board_type == BOARD_FINE9  || board_type == BOARD_Q98_V3)
 		return RK30_PIN0_PC5;
 	
 	return RK30_PIN0_PC0;
@@ -723,6 +778,8 @@ static void boards_override()
 		q98_v2_ipad3_override();
 	else if (board_type == BOARD_FINE9)
 		fine9_override();
+	else if (board_type == BOARD_Q98_V3)
+		q98v3_override();
 		
 	camera_dynamic_init();
 }

@@ -271,7 +271,7 @@ void camera_dynamic_init()
 #endif
 		
 		if (board_type == BOARD_FINE9)
-			new_camera[1].mirror = 0x3; // upsize down
+			new_camera[1].mirror = 0x2; // upsize down
 	}
 }
 #endif /* CONFIG_VIDEO_RK29 */

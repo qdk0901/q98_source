@@ -9,7 +9,7 @@
  * License version 2, as published by the Free Software Foundation, and
  * may be copied, distributed, and modified under those terms.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that git will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -391,7 +391,7 @@ static int fts_read_data(void)
 	else
 		printk(KERN_ERR "get fingers failed!\n");
 
-  touch_point_num = 10;
+  //touch_point_num = 10;
 
 	if(touch_point_num > CFG_MAX_POINT_NUM)
 		printk("[Warning],+++++Touch number[%d] readed is larger than max point number+++++++++++++\n",touch_point_num);
