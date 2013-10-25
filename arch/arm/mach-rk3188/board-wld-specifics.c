@@ -433,7 +433,9 @@ static void q910_101_override()
 	
 	if (panel_type == PANEL_LG97X02 || panel_type == PANEL_HSD97X02) {
 		hwrotation = 90;
+		rk29_bl_info.bl_ref = 0;
 	}
+
 }
 
 //q910 ipad3

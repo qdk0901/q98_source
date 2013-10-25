@@ -455,7 +455,7 @@ static int fts_read_data(void)
 					input_report_abs(data->input_dev, ABS_MT_TOUCH_MAJOR, 1);
 					input_report_abs(data->input_dev, ABS_MT_POSITION_X,  _st_finger_infos[id].i2_x);
 					input_report_abs(data->input_dev, ABS_MT_POSITION_Y,  _st_finger_infos[id].i2_y);
-					printk("ABS_MT_POSITION_X == %d, ABS_MT_POSITION_Y == %d\n",_st_finger_infos[i_count].i2_x,_st_finger_infos[i_count].i2_y);
+					//printk("ABS_MT_POSITION_X == %d, ABS_MT_POSITION_Y == %d\n",_st_finger_infos[i_count].i2_x,_st_finger_infos[i_count].i2_y);
 										
 					sync_flag = 1;
 				}
