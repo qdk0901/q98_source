@@ -259,7 +259,7 @@ static rk_sensor_user_init_data_s rk_init_data_sensor[RK_CAM_NUM] =
 void camera_dynamic_init()
 {
 	int board_type = get_board_type();
-	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9) {
+	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V3) {
 #if SUPPORT_MORE_CAMERA
 		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
 		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;

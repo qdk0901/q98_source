@@ -24,6 +24,7 @@ enum
 };
 
 static int board_type = BOARD_Q97S_IPAD3;
+static int board_sub_type = BOARD_UNKOWN;
 static int panel_type = PANEL_LG97X03;
 static int force_use_codec = FORCE_USE_NONE;
 
@@ -67,6 +68,18 @@ static int __init board_type_setup(char *str)
 }
 
 early_param("board_type", board_type_setup);
+
+static int __init board_sub_type_setup(char *str)
+{
+	if (!strcmp(str, "chuangqi")) {
+			board_sub_type = BOARD_CHUANGQI;
+	}
+	
+	printk("###############################[board_sub_type = %s]##############################\n", str);
+	return 0;
+}
+
+early_param("board_sub_type", board_sub_type_setup);
 
 static int __init panel_type_setup(char *str)
 {
@@ -406,21 +419,19 @@ static void q910_101_override()
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	
-	gpio_request(RK30_PIN0_PA1, NULL);
-	gpio_direction_input(RK30_PIN0_PA1);
-	gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
-	
-	strcpy(rk_device_headset.name, "removed"); //FIXME
+	if (board_audio_path_fix()) {
+		gpio_request(RK30_PIN0_PA1, NULL);
+		gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
+		gpio_direction_output(RK30_PIN0_PA1, 0);
+		gpio_direction_input(RK30_PIN0_PA1);
+		
+		strcpy(rk_device_headset.name, "removed");
+	}
 	
 	signed char orientation[9] = {0, -1, 0, -1, 0, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
 	
 	if (panel_type == PANEL_LG97X02 || panel_type == PANEL_HSD97X02) {
-		//vtl_ts_config_info.screen_max_x = 1024;
-		vtl_ts_config_info.screen_max_y = 1185;
-		vtl_ts_config_info.revert_x_flag = 0;
-		//vtl_ts_config_info.revert_y_flag = 0;
-		//vtl_ts_config_info.exchange_x_y_flag = 0;
 		hwrotation = 90;
 	}
 }
@@ -516,11 +527,15 @@ static void q910_ipad3_override()
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	
-	gpio_request(RK30_PIN0_PA1, NULL);
-	gpio_direction_input(RK30_PIN0_PA1);
-	gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
+	if (board_audio_path_fix()) {
+		gpio_request(RK30_PIN0_PA1, NULL);
+		gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
+		gpio_direction_output(RK30_PIN0_PA1, 0);
+		gpio_direction_input(RK30_PIN0_PA1);
+		
+		strcpy(rk_device_headset.name, "removed");
+	}
 	
-	strcpy(rk_device_headset.name, "removed"); //FIXME
 	signed char orientation[9] = {0, -1, 0, -1, 0, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
 }
@@ -564,13 +579,11 @@ static void q98_v2_ipad3_override()
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	
-	gpio_request(RK30_PIN0_PA1, NULL);
-	gpio_direction_input(RK30_PIN0_PA1);
-	gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
-	
-	strcpy(rk_device_headset.name, "removed"); //FIXME
-	
 	vtl_ts_config_info.revert_x_flag = 1;
+	
+		//ldo6
+  act8846_ldo_info[5].min_uv = 1800000;
+  act8846_ldo_info[5].max_uv = 1800000;
 }
 
 //fine9
@@ -608,6 +621,9 @@ static void fine9_override()
 	vtl_ts_config_info.screen_max_y = 1280;
 	vtl_ts_config_info.revert_x_flag = 0;
 	
+	if (panel_type == PANEL_LTL090CL01W)
+		vtl_ts_config_info.revert_y_flag = 1;
+	
 	signed char orientation[9] = {0, -1, 0, -1, 0, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
 
@@ -615,6 +631,7 @@ static void fine9_override()
 	rk616_pdata.spk_ctl_gpio = RK30_PIN0_PD4;
 	rk616_pdata.mic_sel_gpio = RK30_PIN2_PD7;
 	rk616_pdata.hp_ctl_gpio = RK30_PIN1_PB3;
+	rk616_pdata.lcd1_func = INPUT;
 #endif
 
 	//ldo6
@@ -680,7 +697,24 @@ static void q98v3_override()
 	
 	signed char orientation[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
-} 
+	
+	if (board_sub_type == BOARD_CHUANGQI) {
+		signed char orientation[9] = {-1, 0, 0, 0, 1, 0, 0, 0, -1};
+		memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);			
+	}
+	
+		//ldo6
+  act8846_ldo_info[5].min_uv = 1800000;
+  act8846_ldo_info[5].max_uv = 1800000;
+ 
+#if defined (CONFIG_MFD_RK616)
+  rk616_pdata.lcd1_func = UNUSED;
+  rk616_pdata.hdmi_irq = INVALID_GPIO;
+  rk616_pdata.spk_ctl_gpio = RK30_PIN0_PA0;
+	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
+	rk616_pdata.hp_ctl_gpio = INVALID_GPIO;
+#endif
+}
 
 int board_use_rk616_codec()
 {
@@ -713,7 +747,7 @@ int board_rk616_i2c_channel()
 
 int board_audio_path_fix()
 {
-	if (board_type == BOARD_Q910_IPAD2 || board_type == BOARD_Q910_IPAD3)
+	if (board_type == BOARD_Q910_101 || board_type == BOARD_Q910_IPAD2 || board_type == BOARD_Q910_IPAD3)
 		return 1;
 	
 	return 0;

@@ -982,18 +982,19 @@ static int rk616_playback_path_put(struct snd_kcontrol *kcontrol,
 		DBG("%s : set hp ctl gpio LOW\n", __func__);
 		gpio_set_value(rk616->hp_ctl_gpio, GPIO_LOW);
 	}
-	
-	//FIXME:
-	if (board_audio_path_fix())
-		gpio_direction_output(RK30_PIN0_PA1, 0);
 
 	if(get_hdmi_state())
 		return 0;
+		
+	if (rk616->playback_path == RCV)
+		rk616->playback_path = SPK_PATH;
 
 	switch (rk616->playback_path) {
 	case OFF:
 		break;
 	case RCV:
+
+		
 		//close incall route
 		snd_soc_update_bits(codec, RK616_PGA_AGC_CTL,
 			0x0f, 0x0c);
@@ -1007,6 +1008,7 @@ static int rk616_playback_path_put(struct snd_kcontrol *kcontrol,
 		snd_soc_update_bits(codec, RK616_HPMIX_CTL,
 			RK616_HML_F_PGAL | RK616_HMR_F_PGAL,
 			RK616_HML_F_PGAL | RK616_HMR_F_PGAL);
+			
 		break;
 	case SPK_PATH:
 	case RING_SPK:
@@ -1015,9 +1017,7 @@ static int rk616_playback_path_put(struct snd_kcontrol *kcontrol,
 		snd_soc_update_bits(codec, RK616_SPKR_CTL,
 			RK616_VOL_MASK, SPKOUT_VOLUME);
 
-		//FIXME:
-		if (board_audio_path_fix())
-			gpio_direction_input(RK30_PIN0_PA1);
+
 			
 		if (rk616 && rk616->spk_ctl_gpio != INVALID_GPIO) {
 			DBG("%s : set spk ctl gpio HIGH\n", __func__);
@@ -2166,6 +2166,11 @@ static int rk616_codec_power_up(int type)
 		printk("%s : rk616_priv or rk616_priv->codec is NULL\n", __func__);
 		return -EINVAL;
 	}
+	
+	if (board_audio_path_fix()) {
+		gpio_direction_output(RK30_PIN0_PA1, 0);
+		msleep(150);
+	}
 
 	printk("%s : power up %s%s\n", __func__,
 		type == RK616_CODEC_PLAYBACK ? "playback" : "",
@@ -2201,6 +2206,9 @@ static int rk616_codec_power_up(int type)
 		rk616->is_capture_powerup = true;
 	}
 
+	if (board_audio_path_fix())
+			gpio_direction_input(RK30_PIN0_PA1);
+			
 	return 0;
 }
 
@@ -2213,6 +2221,11 @@ static int rk616_codec_power_down(int type)
 	if (!rk616 || !rk616->codec) {
 		printk("%s : rk616_priv or rk616_priv->codec is NULL\n", __func__);
 		return -EINVAL;
+	}
+	
+	if (board_audio_path_fix()) {
+		gpio_direction_output(RK30_PIN0_PA1, 0);
+		msleep(150);
 	}
 
 	if ((type == RK616_CODEC_PLAYBACK && !(rk616->is_capture_powerup)) ||
@@ -2255,6 +2268,9 @@ static int rk616_codec_power_down(int type)
 		rk616->is_playback_powerup = false;
 		rk616->is_capture_powerup = false;
 	}
+	
+	if (board_audio_path_fix())
+			gpio_direction_input(RK30_PIN0_PA1);
 
 	return 0;
 }
