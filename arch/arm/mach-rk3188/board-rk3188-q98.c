@@ -2914,7 +2914,7 @@ static struct rk29_keys_button key_button[] = {
         {
                 .desc   = "vol-",
                 .code   = KEY_VOLUMEDOWN,
-		.adc_value      = 174,
+								.adc_value      = 174,
                 .gpio   = INVALID_GPIO,
                 .active_low = PRESS_LEV_LOW,
         },
@@ -3214,7 +3214,7 @@ int get_max_freq(struct cpufreq_frequency_table *table)
 	{
 		if(temp<table[i].frequency)
 			temp=table[i].frequency;
-	}	
+	}
 	printk("get_max_freq=%d\n",temp);
 	return temp;
 }

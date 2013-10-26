@@ -649,6 +649,9 @@ static void fine9_override()
   }
   
   rk29_bl_info.max_brightness = 255;
+  
+  key_button[0].code = KEY_VOLUMEUP;
+  key_button[2].code = KEY_VOLUMEDOWN;
 }
 
 // q98v3 for gsd and chuangqi

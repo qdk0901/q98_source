@@ -812,7 +812,7 @@ static struct rk_sensor_reg sensor_preview_data[] =
 
 	{0xc8 , 0x00},//close scaler
 	{0x99 , 0x22},// 1/2 subsample
-	{0x9a , 0x06},//qdk--0x06},
+	{0x9a , 0x07},//qdk--0x06},
 	{0x9b , 0x00},
 	{0x9c , 0x00},
 	{0x9d , 0x00},
@@ -1349,9 +1349,13 @@ static int sensor_flip_cb(struct i2c_client *client, int flip)
 				err = sensor_write(client, 0x17, ((val |0x2)+4));
 				}
 			else {
-				err = sensor_write(client, 0x17, ((val & 0xfc)+4));
+				err = sensor_write(client, 0x17, ((val & 0xfd)+4));
 				}
 		}
+		
+		// qdk++ gc2035 upsize down on fine9, the register written failed in sensor_mirror_cb,
+		// so add fix code here
+		sensor_write(client, 0x17, 0x17);
 	} else {
 		//do nothing
 	}
