@@ -102,6 +102,16 @@ static int __init panel_type_setup(char *str)
 
 early_param("panel_type", panel_type_setup);
 
+static int __init codec_type_setup(char* str)
+{
+		if (!strcmp(str, "rt3261"))
+			force_use_codec = FORCE_USE_CODEC_RT3261;
+		
+		printk("##############################[codec_type = %s]#############################\n", str);
+		return;
+}
+early_param("codec_type", codec_type_setup);
+
 static void remove_i2c_info(struct i2c_board_info* info, int size, char* item_to_erase)
 {
 		int i;

@@ -852,6 +852,15 @@ static struct sensor_platform_data cm3217_info = {
 
 #endif
 
+#ifdef CONFIG_LS_CM3232
+static struct sensor_platform_data cm3232_info = {
+	.type = SENSOR_TYPE_LIGHT,
+	.irq_enable = 0,
+	.poll_delay_ms = 500,
+};
+
+#endif
+
 #ifdef CONFIG_RK_HDMI
 #define RK_HDMI_RST_PIN 			RK30_PIN3_PB2
 #define RK_HDMI_EN_PIN RK30_PIN3_PA0
@@ -2767,6 +2776,15 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 		.addr          = 0x10,
 		.flags         = 0,
 		.platform_data = &cm3217_info,
+	},
+#endif
+
+#if defined (CONFIG_LS_CM3232)
+	{
+		.type          = "lightsensor",
+		.addr          = 0x4f,
+		.flags         = 0,
+		.platform_data = &cm3232_info,
 	},
 #endif
 

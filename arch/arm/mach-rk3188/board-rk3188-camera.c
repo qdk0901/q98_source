@@ -139,6 +139,24 @@ static struct rkcamera_platform_data new_camera[] = {
                       0x78,
                       0,
                       24), 
+   new_camera_device(RK29_CAM_SENSOR_SP2518,
+   										front,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      RK30_PIN3_PB5,
+                      1, //active high
+                      0, //flash attach
+                      0x200000, //resolution 2MP
+                      0x00,
+                      3,
+                      100000,
+                      0x60,
+                      0,
+                      24
+                  ),
 #endif     
     new_camera_device_end  
 };
