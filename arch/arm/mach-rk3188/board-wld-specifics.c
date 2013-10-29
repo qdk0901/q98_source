@@ -558,7 +558,7 @@ static void q98_v2_ipad3_override()
 {
 	lcd_density = 320;
 	hwrotation = 270;
-	force_use_codec = FORCE_USE_CODEC_RT3261;
+	//force_use_codec = FORCE_USE_CODEC_RT3261;
 	
 	//remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "vtl_ts");
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), GTP_I2C_NAME);
@@ -569,6 +569,7 @@ static void q98_v2_ipad3_override()
 	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "cat66121_hdmi");
 	remove_i2c_info(i2c4_info, ARRAY_SIZE(i2c4_info), "rk616");
 	//remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "rk616");
+	remove_i2c_info(i2c2_info, ARRAY_SIZE(i2c2_info), "ft5506_q910");
 	
 	rk29_bl_info.io_init = rk29_backlight_io_init_q910_ipad3;
 	rk29_bl_info.io_deinit = rk29_backlight_io_deinit_q910_ipad3;
@@ -587,7 +588,7 @@ static void q98_v2_ipad3_override()
 #endif
 	
 	rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
-	rk_headset_info.headset_in_type = HEADSET_IN_LOW;
+	rk_headset_info.headset_in_type = HEADSET_IN_HIGH;
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	

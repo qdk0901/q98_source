@@ -313,6 +313,57 @@ struct ft5506_platform_data ft5506_info = {
 };
 #endif
 
+#if defined(CONFIG_TOUCHSCREEN_SIS_I2C)
+
+#include "../../../drivers/input/touchscreen/sis_i2c.h"
+#define TOUCH_RESET_PIN RK30_PIN0_PB6
+#define TOUCH_INT_PIN   RK30_PIN1_PB7
+
+int sis_init_platform_hw(void)
+{
+	int ret;
+	
+	if (TOUCH_RESET_PIN != INVALID_GPIO) {
+		ret = gpio_request(TOUCH_RESET_PIN, "sis reset pin");
+		if (ret != 0) {
+			gpio_free(TOUCH_RESET_PIN);
+			printk("sis gpio_request SIS_TOUCH_RESET_PIN error\n");
+			return -EIO;
+		}
+		gpio_direction_output(TOUCH_RESET_PIN, GPIO_LOW);
+    msleep(100);
+		gpio_set_value(TOUCH_RESET_PIN, GPIO_HIGH);
+	}
+	return 0;
+
+}
+
+void sis_exit_platform_hw(void)
+{
+    printk("sis_exit_platform_hw\n");
+    gpio_free(TOUCH_RESET_PIN);
+    gpio_free(TOUCH_INT_PIN);
+}
+
+int sis_reset(void)
+{
+	gpio_direction_output(TOUCH_RESET_PIN, GPIO_LOW);
+  msleep(100);
+	gpio_set_value(TOUCH_RESET_PIN, GPIO_HIGH);
+	return 0;
+}
+
+struct sis_i2c_rmi_platform_data sis_info ={
+	.init_platform_hw = sis_init_platform_hw,
+	.exit_platform_hw = sis_exit_platform_hw,
+	.sis_reset = sis_reset,
+	.touch_reset_pin = TOUCH_RESET_PIN,
+	.touch_int_pin = TOUCH_INT_PIN,
+	.tp_enter_init = tp_enter_init,
+	.tp_exit_init = tp_exit_init,
+};
+
+#endif
 
 static struct spi_board_info board_spi_devices[] = {
 };
@@ -2770,6 +2821,16 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 },
 #endif
 
+#if defined (CONFIG_TOUCHSCREEN_SIS_I2C)
+	{
+		.type          = "sis_i2c_ts",
+		.addr          = 0x08,
+		.flags         = 0,
+		.irq           = RK30_PIN1_PB7,
+		.platform_data = &sis_info,
+	},
+#endif
+
 #if defined (CONFIG_LS_CM3217)
 	{
 		.type          = "lightsensor",
@@ -2782,7 +2843,7 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 #if defined (CONFIG_LS_CM3232)
 	{
 		.type          = "lightsensor",
-		.addr          = 0x4f,
+		.addr          = 0x10,
 		.flags         = 0,
 		.platform_data = &cm3232_info,
 	},

@@ -107,3 +107,4 @@ obj-$(CONFIG_TOUCHSCREEN_GSLX680_RK3168)	+= rockchip_gslX680_rk3168.o
 obj-$(CONFIG_TOUCHSCREEN_CT36X)		+= ct36x_ts/
 obj-$(CONFIG_TOCHSCREEN_GT9XX_IIC)  += gt9xx.o gt9xx_update.o goodix_tool.o
 obj-$(CONFIG_TOUCHSCREEN_CT36X_WLD) += vtl/
+obj-$(CONFIG_TOUCHSCREEN_SIS_I2C)   += sis_i2c.o
