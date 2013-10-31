@@ -3254,13 +3254,11 @@ static int rt3261_probe(struct snd_soc_codec *codec)
 	snd_soc_write(codec, RT3261_GEN_CTRL2, 0x4040);
 	ret = snd_soc_read(codec, RT3261_VENDOR_ID);
 	printk("read codec chip id is 0x%x\n",ret);
-	if(0x5==ret) {
+	if (0x5 == ret || 6 == ret) {
 		snd_soc_update_bits(codec, RT3261_JD_CTRL, 
 			RT3261_JD1_IN4P_MASK | RT3261_JD2_IN4N_MASK,
 			RT3261_JD1_IN4P_EN | RT3261_JD2_IN4N_EN);
-	}
-	else if(0x3==ret)
-	{
+	} else if(0x3 == ret) {
 		printk("you use an old chip, please use a new one\n");
 	}
 	snd_soc_update_bits(codec, RT3261_PWR_ANLG1,

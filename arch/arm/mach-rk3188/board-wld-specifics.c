@@ -703,11 +703,11 @@ static void q98v3_override()
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	
-	gpio_request(RK30_PIN0_PA1, NULL);
-	gpio_direction_input(RK30_PIN0_PA1);
-	gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
+	//gpio_request(RK30_PIN0_PA1, NULL);
+	//gpio_direction_input(RK30_PIN0_PA1);
+	//gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
 	
-	strcpy(rk_device_headset.name, "removed"); //FIXME
+	//strcpy(rk_device_headset.name, "removed"); //FIXME
 	
 	vtl_ts_config_info.revert_x_flag = 1;
 	

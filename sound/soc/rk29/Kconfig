@@ -194,6 +194,7 @@ config SND_RK29_SOC_RT3261
 	depends on SND_RK29_SOC
 	select SND_RK29_SOC_I2S
 	select SND_SOC_RT3261
+	select SND_HWDEP
 	help
 	  Say Y if you want to add support for SoC audio on rockchip
 	  with the RT3261.
