@@ -120,6 +120,7 @@ static int rt3261_reg_init(struct snd_soc_codec *codec)
 
 static int rt3261_customer_redefine(struct snd_soc_codec *codec, struct rt3261_priv *rt3261)
 {
+	printk("rt3261 %d speaker\n", rt3261->spk_num);
 	if(rt3261->spk_num==TWO_SPK)
 	{
 		snd_soc_update_bits(codec, RT3261_SPO_L_MIXER,
@@ -137,7 +138,11 @@ static int rt3261_customer_redefine(struct snd_soc_codec *codec, struct rt3261_p
 			RT3261_M_SV_R_SPM_R, 1 << RT3261_M_SV_R_SPM_R_SFT);
 	}
 
-	
+	if (rt3261->modem_input_mode)
+		printk("IN2 on differential mode\n");
+	else
+		printk("IN2 on single ended mode\n");
+		
 	snd_soc_update_bits(codec, RT3261_IN3_IN4,
 		RT3261_IN_DF2, rt3261->modem_input_mode << RT3261_IN_SFT2);
 	snd_soc_update_bits(codec, RT3261_GEN_CTRL1,

@@ -33,6 +33,11 @@ int get_board_type()
 	return board_type;
 }
 
+int get_board_sub_type()
+{
+	return board_sub_type;
+}
+
 int get_panel_type()
 {
 	return panel_type;
@@ -810,6 +815,12 @@ static void usb_detect_init()
 		board_usb_detect_init(RK30_PIN0_PA7);
 }
 
+static void codec_override()
+{
+	if (force_use_codec == FORCE_USE_CODEC_RT3261)
+		rt3261_info.modem_input_mode = SINGLE_END;	
+}
+
 static void boards_override()
 {
 	if (board_type == BOARD_Q97S_IPAD2)
@@ -830,6 +841,7 @@ static void boards_override()
 		fine9_override();
 	else if (board_type == BOARD_Q98_V3)
 		q98v3_override();
-		
+	
+	codec_override();
 	camera_dynamic_init();
 }

@@ -104,6 +104,24 @@ static struct rkcamera_platform_data new_camera[] = {
 	                0x42,
 	                0,
 	                24),
+   new_camera_device_ex(RK29_CAM_SENSOR_SP2518,
+   										front,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      INVALID_VALUE,
+                      RK30_PIN3_PB4,
+                      1, //active high
+                      0, //flash attach
+                      0x200000, //resolution 2MP
+                      0x00,
+                      3,
+                      100000,
+                      0x60,
+                      0,
+                      24
+                  ),
 #else
    new_camera_device_ex(RK29_CAM_SENSOR_OV5640,
                         back,
@@ -139,24 +157,7 @@ static struct rkcamera_platform_data new_camera[] = {
                       0x78,
                       0,
                       24), 
-   new_camera_device(RK29_CAM_SENSOR_SP2518,
-   										front,
-                      INVALID_VALUE,
-                      INVALID_VALUE,
-                      INVALID_VALUE,
-                      INVALID_VALUE,
-                      INVALID_VALUE,
-                      RK30_PIN3_PB5,
-                      1, //active high
-                      0, //flash attach
-                      0x200000, //resolution 2MP
-                      0x00,
-                      3,
-                      100000,
-                      0x60,
-                      0,
-                      24
-                  ),
+
 #endif     
     new_camera_device_end  
 };
@@ -277,7 +278,9 @@ static rk_sensor_user_init_data_s rk_init_data_sensor[RK_CAM_NUM] =
 void camera_dynamic_init()
 {
 	int board_type = get_board_type();
-	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V2_IPAD3 || board_type == BOARD_Q98_V3) {
+	int board_sub_type = get_board_sub_type();
+	
+	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V2_IPAD3) {
 #if SUPPORT_MORE_CAMERA
 		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
 		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
@@ -290,6 +293,12 @@ void camera_dynamic_init()
 		
 		if (board_type == BOARD_FINE9)
 			new_camera[1].mirror = 0x3; // upsize down
+			
+		if (board_type == BOARD_Q98_V3 && board_sub_type == BOARD_CHUANGQI)
+		{
+			new_camera[0].mirror = 3;
+			new_camera[4].mirror = 3;
+		}
 	}
 }
 #endif /* CONFIG_VIDEO_RK29 */

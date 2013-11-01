@@ -589,6 +589,7 @@ enum
 };
 
 int get_board_type();
+int get_board_sub_type();
 int get_panel_type();
 int board_use_rk616_codec();
 int board_has_rk616();

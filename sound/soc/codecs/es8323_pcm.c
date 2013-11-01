@@ -100,7 +100,7 @@ static struct es8323_reg init_data[] = {
 	{0x04, 0x0C}, //Enable LOUT/ROUT
 	{0x0a, 0xf0},  //ADC INPUT=LIN2/RIN2
 	{0x0b, 0x82},  //ADC INPUT=LIN2/RIN2 //82
-	{0x09, 0x00}, //Select analog input PGA gain for ADC, 24bB
+	{0x09, 0x75}, //Select analog input PGA gain for ADC, 24bB
 	{0x0c, 0x1F}, //PCM- 16bit
 	{0x0d, 0x02}, //MCLK/RCLK ratio for ADC, 11.2M 256FS
 	{0x10, 0x10}, //ADC digital volume 0db
@@ -119,6 +119,7 @@ static struct es8323_reg init_data[] = {
 	{0x18, 0x02}, // MCLK/RCLK ratio for DAC, 11.2M 256FS
 	{0x1A, 0x00}, // DAC digital volume
 	{0x1B, 0x00}, // DAC digital volume
+	{0x1D, 0x46}, //right channel output zero
 	
 	//DAC mixer
 	{0x26, 0x00}, // select RIN1/LIN1 for DAC
@@ -128,16 +129,17 @@ static struct es8323_reg init_data[] = {
 	{0x2A, 0x90}, // RDAC to right mixer
 	
 	// LOUT/ROUT volume
-	{0x2E, 0x1E - 5}, //0dB
-	{0x2F, 0x1E - 5} , //0dB
-	{0x30, 0x1E - 5}, //0dB
-	{0x31, 0x1E - 5}, //0dB
+	{0x2E, 0x1E}, //0dB
+	{0x2F, 0x1E} , //0dB
+	{0x30, 0x1E}, //0dB
+	{0x31, 0x1E}, //0dB
 	
 	//Power up DEM and STM
 	{0x02, 0x00},
-	{0x08, 0x00},   //ES8388 salve
-	{0x2B, 0x80},
-	
+	{0x08, 0x00}, //ES8388 slave
+	{0x2B, 0x80}, 
+
+
 {0x1E,0x1F},
 {0x1F,0x00},
 {0x20,0xED},
