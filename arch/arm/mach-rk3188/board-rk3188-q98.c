@@ -2404,8 +2404,8 @@ static  struct pmu_info  act8846_ldo_info[] = {
 	},
 	{
 		.name          = "act_ldo4",   //vcca33
-		.min_uv          = 3300000,
-		.max_uv         = 3300000,
+		.min_uv          = 3000000,
+		.max_uv         = 3000000,
 	},
 	{
 		.name          = "act_ldo5",   //vcctp
@@ -2842,7 +2842,7 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 
 #if defined (CONFIG_LS_CM3232)
 	{
-		.type          = "lightsensor",
+		.type          = "light_cm3232",
 		.addr          = 0x10,
 		.flags         = 0,
 		.platform_data = &cm3232_info,

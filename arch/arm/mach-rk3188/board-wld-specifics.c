@@ -802,7 +802,7 @@ int board_rotate_screen()
 
 int board_custom_boot_logo()
 {
-	return 0;	
+	return 1;	
 }
 
 extern void camera_dynamic_init();
@@ -817,8 +817,9 @@ static void usb_detect_init()
 
 static void codec_override()
 {
-	if (force_use_codec == FORCE_USE_CODEC_RT3261)
-		rt3261_info.modem_input_mode = SINGLE_END;	
+	if (force_use_codec == FORCE_USE_CODEC_RT3261) {
+		rt3261_info.modem_input_mode = SINGLE_END;
+	}
 }
 
 static void boards_override()
