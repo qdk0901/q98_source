@@ -16,6 +16,9 @@ module_param(hwrotation, int, 0644);
 static char *board_id = "unkown";
 module_param(board_id, charp, 0644);
 
+static char* codec_id = "generic";
+module_param(codec_id, charp, 0644);
+
 enum
 {
 	FORCE_USE_NONE,
@@ -450,6 +453,8 @@ static void q910_101_override()
 		hwrotation = 90;
 		rk29_bl_info.bl_ref = 0;
 	}
+	
+	rt3261_info.codec_en_gpio = RK30_PIN0_PD7;
 
 }
 
@@ -776,9 +781,11 @@ int board_audio_path_fix()
 
 int get_host_drv_pin()
 {
-	if (board_type == BOARD_FINE9  || board_type == BOARD_Q98_V3)
+	if (board_type == BOARD_FINE9)
 		return RK30_PIN0_PC5;
-	
+	else if (board_type == BOARD_Q98_V3)
+		return INVALID_GPIO;
+		
 	return RK30_PIN0_PC0;
 }
 
@@ -802,14 +809,14 @@ int board_rotate_screen()
 
 int board_custom_boot_logo()
 {
-	return 1;	
+	return 0;	
 }
 
 extern void camera_dynamic_init();
 
 static void usb_detect_init()
 {
-	if (board_type == BOARD_Q98_IPAD3 || BOARD_Q98_IPAD2)
+	if (board_type == BOARD_Q98_IPAD3 || board_type == BOARD_Q98_IPAD2)
 		board_usb_detect_init(RK30_PIN3_PD5);
 	else
 		board_usb_detect_init(RK30_PIN0_PA7);
@@ -818,7 +825,8 @@ static void usb_detect_init()
 static void codec_override()
 {
 	if (force_use_codec == FORCE_USE_CODEC_RT3261) {
-		rt3261_info.modem_input_mode = SINGLE_END;
+		//rt3261_info.modem_input_mode = SINGLE_END;
+		codec_id = "rt3261";
 	}
 }
 

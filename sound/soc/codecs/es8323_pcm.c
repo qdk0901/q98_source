@@ -103,8 +103,8 @@ static struct es8323_reg init_data[] = {
 	{0x09, 0x72}, //Select analog input PGA gain for ADC, 24bB
 	{0x0c, 0x1F}, //PCM- 16bit
 	{0x0d, 0x02}, //MCLK/RCLK ratio for ADC, 11.2M 256FS
-	{0x10, 0x10}, //ADC digital volume 0db
-	{0x11, 0x10}, //ADC digital volume 0db
+	{0x10, 0x0}, //ADC digital volume 0db
+	{0x11, 0x0}, //ADC digital volume 0db
 	
 	//ALC control 
 	/*
@@ -117,8 +117,8 @@ static struct es8323_reg init_data[] = {
 	
 	{0x17, 0x1F}, // SFI for DAC ,  PCM -16bit
 	{0x18, 0x02}, // MCLK/RCLK ratio for DAC, 11.2M 256FS
-	{0x1A, 0x30}, // DAC digital volume
-	{0x1B, 0x30}, // DAC digital volume
+	{0x1A, 30}, // DAC digital volume
+	{0x1B, 30}, // DAC digital volume
 	{0x1D, 0x46}, //right channel output zero
 	
 	//DAC mixer
