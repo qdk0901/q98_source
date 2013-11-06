@@ -62,8 +62,8 @@ static int bp_active(struct bp_private_data *bp, int enable)
 		gpio_set_value(bp->ops->bp_en, GPIO_LOW);
 	} else {
 		printk("wm218 power off \n");
-		gpio_set_value(bp->ops->bp_en, GPIO_HIGH);
-		msleep(4000);
+		//gpio_set_value(bp->ops->bp_en, GPIO_HIGH);
+		//msleep(4000);
 		gpio_set_value(bp->ops->bp_en, GPIO_HIGH);
 		gpio_set_value(bp->ops->bp_power, GPIO_LOW);	
 		gpio_set_value(bp->ops->bp_reset, GPIO_HIGH);

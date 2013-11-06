@@ -47,6 +47,12 @@ __weak int get_battery_status(void)
 	return 0;
 }
 
+static int is_charging_boot()
+{
+	int is = (strstr(saved_command_line,"charger") != NULL);
+	return is;
+}
+
 static DEFINE_MUTEX(registration_lock);
 struct fb_info *registered_fb[FB_MAX] __read_mostly;
 int num_registered_fb __read_mostly;
@@ -513,7 +519,7 @@ static int fb_show_logo_line(struct fb_info *info, int rotate,
 		image.dy = y;
 	}
 #else
-	if (board_custom_boot_logo()) {
+	if (board_custom_boot_logo() || is_charging_boot()) {
 		image.dx = (info->var.xres / 2)-(logo->width) / 2;
 		image.dy = (info->var.yres / 2)-(logo->height) / 2;
 	} else {
@@ -695,7 +701,7 @@ int fb_show_logo(struct fb_info *info, int rotate)
 	}
 #else
 	int n = num_online_cpus();
-	if (board_custom_boot_logo())
+	if (board_custom_boot_logo() || is_charging_boot())
 		n = 1;
 		
 	y = fb_show_logo_line(info, rotate, fb_logo.logo, 0,

@@ -603,6 +603,7 @@ static void q98_v2_ipad3_override()
 	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	
 	vtl_ts_config_info.revert_x_flag = 1;
+	vtl_ts_config_info.revert_y_flag = 0;
 	
 		//ldo6
   act8846_ldo_info[5].min_uv = 1800000;
@@ -638,7 +639,7 @@ static void fine9_override()
 	rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
 	rk_headset_info.headset_in_type = HEADSET_IN_HIGH;
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
-	rk_headset_info.Hook_down_type = HOOK_DOWN_HIGH;
+	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
 	
 	vtl_ts_config_info.screen_max_x = 1920;
 	vtl_ts_config_info.screen_max_y = 1280;
@@ -650,7 +651,7 @@ static void fine9_override()
 	signed char orientation[9] = {0, -1, 0, -1, 0, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
 
-#if defined (CONFIG_MFD_RK616)	
+#if defined (CONFIG_MFD_RK616)
 	rk616_pdata.spk_ctl_gpio = RK30_PIN0_PD4;
 	rk616_pdata.mic_sel_gpio = RK30_PIN2_PD7;
 	rk616_pdata.hp_ctl_gpio = RK30_PIN1_PB3;
@@ -708,11 +709,17 @@ static void q98v3_override()
 	lcdc1_screen_info.io_enable = rk_fb_io_enable_q910_ipad3;
 #endif
 	
-	rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
-	rk_headset_info.headset_in_type = HEADSET_IN_LOW;
-	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
-	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
-	
+	if (board_sub_type == BOARD_CHUANGQI) {
+		rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
+		rk_headset_info.headset_in_type = HEADSET_IN_HIGH;
+		rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
+		rk_headset_info.Hook_down_type = HOOK_DOWN_HIGH;
+	} else {
+		rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
+		rk_headset_info.headset_in_type = HEADSET_IN_LOW;
+		rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
+		rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;			
+	}
 	//gpio_request(RK30_PIN0_PA1, NULL);
 	//gpio_direction_input(RK30_PIN0_PA1);
 	//gpio_pull_updown(RK30_PIN0_PA1, PullDisable);
@@ -809,7 +816,7 @@ int board_rotate_screen()
 
 int board_custom_boot_logo()
 {
-	return 0;	
+	return 1;	
 }
 
 extern void camera_dynamic_init();

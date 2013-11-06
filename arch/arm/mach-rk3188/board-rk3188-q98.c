@@ -139,7 +139,7 @@ struct rk_headset_pdata rk_headset_info = {
 struct platform_device rk_device_headset = {
 		.name	= "rk_headsetdet",
 		.id 	= 0,
-		.dev    = {
+		.dev  = {
 			    .platform_data = &rk_headset_info,
 		}
 };
@@ -2842,7 +2842,7 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 
 #if defined (CONFIG_LS_CM3232)
 	{
-		.type          = "light_cm3232",
+		.type          = "lightsensor",
 		.addr          = 0x10,
 		.flags         = 0,
 		.platform_data = &cm3232_info,

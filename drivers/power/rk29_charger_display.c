@@ -166,7 +166,7 @@ static int  __init start_charge_logo_display(void)
 
 	if(val_status.intval == POWER_SUPPLY_STATUS_CHARGING)
 	{
-		if ((board_boot_mode() == BOOT_MODE_NORMAL) ||(board_boot_mode() == BOOT_MODE_CHARGE)|| (val_capacity.intval <= pwr_on_thrsd))  //do not enter power on charge mode when soft  reset
+		if ((board_boot_mode() == BOOT_MODE_NORMAL) ||(board_boot_mode() == BOOT_MODE_CHARGE)/*qdk--|| (val_capacity.intval <= pwr_on_thrsd)*/)  //do not enter power on charge mode when soft  reset
 	    {			
 			add_bootmode_charger_to_cmdline();
 			//boot_mode_init("charge");
@@ -177,6 +177,6 @@ static int  __init start_charge_logo_display(void)
 	return 0;
 } 
 
-//subsys_initcall_sync(start_charge_logo_display);
-module_init(start_charge_logo_display);
+subsys_initcall_sync(start_charge_logo_display);
+//module_init(start_charge_logo_display);
 #endif

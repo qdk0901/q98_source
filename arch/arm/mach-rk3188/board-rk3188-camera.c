@@ -275,6 +275,8 @@ static rk_sensor_user_init_data_s rk_init_data_sensor[RK_CAM_NUM] =
 };
 #include "../../../drivers/media/video/rk30_camera.c"
 
+extern void camera_ov5640_override();
+
 void camera_dynamic_init()
 {
 	int board_type = get_board_type();
@@ -294,11 +296,13 @@ void camera_dynamic_init()
 		if (board_type == BOARD_FINE9)
 			new_camera[1].mirror = 0x3; // upsize down
 			
-		if (board_type == BOARD_Q98_V3 && board_sub_type == BOARD_CHUANGQI)
-		{
-			new_camera[0].mirror = 3;
-			new_camera[4].mirror = 3;
-		}
+	}
+	
+	if (board_type == BOARD_Q98_V3 && board_sub_type == BOARD_CHUANGQI)
+	{
+		//new_camera[0].mirror = 3;
+		//new_camera[4].mirror = 3;
+		camera_ov5640_override();
 	}
 }
 #endif /* CONFIG_VIDEO_RK29 */

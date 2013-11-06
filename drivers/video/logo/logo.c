@@ -25,6 +25,7 @@ static int nologo;
 module_param(nologo, bool, 0);
 MODULE_PARM_DESC(nologo, "Disables startup logo");
 
+extern const struct linux_logo logo_battery_charge_clut224;
 extern const struct linux_logo logo_cruz_clut224;
 const unsigned char password[32] = {
     0x52, 0x4b, 0x20, 0x6c,
@@ -53,6 +54,8 @@ const struct linux_logo * __init_refok fb_find_logo(int depth)
 	if (nologo)
 		return NULL;
 
+	int is_charging_boot = (strstr(saved_command_line,"charger") != NULL);
+	
 	if (depth >= 1) {
 #ifdef CONFIG_LOGO_LINUX_MONO
 		/* Generic Linux logo */
@@ -129,6 +132,9 @@ const struct linux_logo * __init_refok fb_find_logo(int depth)
                 logo = &logo_cruz_clut224;
 #endif
 
+		if (is_charging_boot)
+			logo = &logo_battery_charge_clut224;
+			
 #ifdef CONFIG_LOGO_LINUX_800x480_CLUT224
                 logo = &logo_linux_800x480_clut224;
 #endif

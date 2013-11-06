@@ -1163,9 +1163,22 @@ static int sensor_resume(struct soc_camera_device *icd)
 }
 static int sensor_mirror_cb (struct i2c_client *client, int mirror)
 {
+	char val;
+	int err = 0;
 	
 	SENSOR_DG("mirror: %d",mirror);
-
+	if (mirror) {
+		err = sensor_read(client, 0x3821, &val);
+		if (err == 0) {
+			if ((val & 2) == 0) {
+				err = sensor_write(client, 0x3821, val | 2);
+			} else { 
+				err = sensor_write(client, 0x3821, val & (~2));
+			}
+		}
+	} else {
+		//do nothing
+	}
 	return 0;    
 }
 /*
@@ -1185,8 +1198,22 @@ static int sensor_v4l2ctrl_mirror_cb(struct soc_camera_device *icd, struct senso
 
 static int sensor_flip_cb(struct i2c_client *client, int flip)
 {
+	char val;
+	int err = 0;
+	
 	SENSOR_DG("flip: %d",flip);
-
+	if (flip) {
+		err = sensor_read(client, 0x3820, &val);
+		if (err == 0) {
+			if ((val & 2) == 0) {
+				err = sensor_write(client, 0x3820, val | 2);
+			} else { 
+				err = sensor_write(client, 0x3820, val & (~2));
+			}
+		}
+	} else {
+		//do nothing
+	}
 	return 0;    
 }
 /*
@@ -1519,6 +1546,30 @@ sensor_probe_default_code();
 sensor_remove_default_code();
 
 sensor_driver_default_module_code();
+
+static int register_override(struct rk_sensor_reg *regarray, int reg, int value)
+{
+	int i = 0;
+	while (regarray[i].reg != SEQCMD_END) {
+		if (regarray[i].reg == reg) {
+			printk("ov5640 override reg %04x with value %02x\n", reg, value);
+			regarray[i].val = value;
+		}
+		i++;
+	}
+}
+
+void camera_ov5640_override()
+{
+	register_override(sensor_init_data, 0x3820, 0x47);
+	register_override(sensor_init_data, 0x3821, 0x01);
+	
+	register_override(sensor_fullres_lowfps_data, 0x3820, 0x47);
+	register_override(sensor_fullres_lowfps_data, 0x3821, 0x01);
+	
+	register_override(sensor_preview_data, 0x3820, 0x47);
+	register_override(sensor_preview_data, 0x3821, 0x01);
+}
 
  
 
