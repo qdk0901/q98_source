@@ -608,6 +608,12 @@ static void q98_v2_ipad3_override()
 		//ldo6
   act8846_ldo_info[5].min_uv = 1800000;
   act8846_ldo_info[5].max_uv = 1800000;
+  
+  #if defined (CONFIG_MFD_RK616)
+	rk616_pdata.spk_ctl_gpio = RK30_PIN0_PA0;
+	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
+	rk616_pdata.hp_ctl_gpio = INVALID_GPIO;
+	#endif
 }
 
 //fine9
@@ -639,8 +645,9 @@ static void fine9_override()
 	rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
 	rk_headset_info.headset_in_type = HEADSET_IN_HIGH;
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
-	rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;
-	
+	rk_headset_info.Hook_down_type = HOOK_DOWN_HIGH;
+
+		
 	vtl_ts_config_info.screen_max_x = 1920;
 	vtl_ts_config_info.screen_max_y = 1280;
 	vtl_ts_config_info.revert_x_flag = 0;
@@ -747,6 +754,9 @@ static void q98v3_override()
 	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
 	rk616_pdata.hp_ctl_gpio = INVALID_GPIO;
 #endif
+
+	if (board_sub_type == BOARD_CHUANGQI)
+		timed_gpios[0].adjust_time = 200;
 }
 
 int board_use_rk616_codec()

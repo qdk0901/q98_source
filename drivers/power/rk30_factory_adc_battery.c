@@ -110,24 +110,26 @@ static int batt_table[2*BATT_NUM+6] =
 };
 #define adc_to_voltage(adc_val) ((adc_val * BAT_DEFINE_VALUE * (batt_table[4] +batt_table[5])) / (1024 *batt_table[5]))
 #else
-#define BATT_MAX_VOL_VALUE                              8250               //Full charge voltage
+#define BATT_MAX_VOL_VALUE                              8180               //Full charge voltage
 #define BATT_ZERO_VOL_VALUE                             6900            	// power down voltage 
 #define BATT_NOMAL_VOL_VALUE                          7600                
 
 
 static int batt_table[2*BATT_NUM+6] =
 {
-	0x4B434F52,0x7461625F,0x79726574, 1, 466, 100,
+	0x4B434F52,0x7461625F,0x79726574, 1, 481, 100,
 	//7200, 7305, 7411, 7516, 7622, 7727, 7833, 7938, 8044, 8150, 
 	//7350, 7450, 7550, 7650, 7750, 7850, 7950, 8050, 8150, 8250,
 	//7000,	7244,	7390,	7485,	7580,	7675,	7779,	7887,	7990,	8090,	8200,
 	//7502,	7702,	7820,	7900,	7957,	8005,	8060,	8112,	8167,	8230,	8300,
 	//oupai
-6705,	7037,	7260,	7450,	7580,	7675,	7779,	7887,	7980,	8063,	8149,
-7004,	7370,	7583,	7746,	7852,	7944,	8006,	8077,	8125,	8166,	8206,
-
-
-
+#if 0
+6604,	6817,	7016,	7191,	7347,	7440,	7529,	7604,	7737,	7905,	8130,
+7004,	7239,	7420,	7555,	7640,	7722,	7801,	7874,	7967,	8080,	8188,
+#else
+6604,	6817,	7016,	7191,	7347,	7440,	7529,	7604,	7737,	7905,	8200,
+7004,	7239,	7420,	7555,	7640,	7722,	7801,	7907,	8059,	8200,	8400,
+#endif
 };
 #define adc_to_voltage(adc_val) ((adc_val * BAT_DEFINE_VALUE * (batt_table[4] +batt_table[5])) / (1024 *batt_table[5]))
 #endif

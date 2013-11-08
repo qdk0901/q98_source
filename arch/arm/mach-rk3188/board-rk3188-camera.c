@@ -298,11 +298,22 @@ void camera_dynamic_init()
 			
 	}
 	
-	if (board_type == BOARD_Q98_V3 && board_sub_type == BOARD_CHUANGQI)
-	{
+	if (board_type == BOARD_Q98_V3 && board_sub_type == BOARD_CHUANGQI) {
 		//new_camera[0].mirror = 3;
 		//new_camera[4].mirror = 3;
 		camera_ov5640_override();
+	}
+	
+	if (board_type == BOARD_Q98_V3 && board_sub_type != BOARD_CHUANGQI) {
+#if SUPPORT_MORE_CAMERA
+		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
+		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
+		new_camera[2].io.gpio_powerdown = RK30_PIN3_PB4;
+		new_camera[3].io.gpio_powerdown = RK30_PIN3_PB5;
+#else
+		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
+		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
+#endif		
 	}
 }
 #endif /* CONFIG_VIDEO_RK29 */

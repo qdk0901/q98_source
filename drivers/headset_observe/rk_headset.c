@@ -42,7 +42,7 @@
 #include <linux/slab.h>
 
 /* Debug */
-#if 1
+#if 0
 #define DBG(x...) printk(x)
 #else
 #define DBG(x...) do { } while (0)
@@ -142,7 +142,6 @@ static irqreturn_t Hook_interrupt(int irq, void *dev_id)
 
 static void headsetobserve_work(struct work_struct *work)
 {
-	printk("@@@@-2\n");
 	int level = 0;
 	struct rk_headset_pdata *pdata = headset_info->pdata;
 	static unsigned int old_status = 0;

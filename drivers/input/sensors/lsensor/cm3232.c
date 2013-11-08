@@ -33,6 +33,8 @@
 #include <linux/sensor-dev.h>
 
 
+#define DBG printk
+
 #define CM3232_CLOSE	0x01
 
 
@@ -82,7 +84,7 @@ static int sensor_active(struct i2c_client *client, int enable, int rate)
 	}
 
 	if(enable)
-	{	
+	{
 		sensor->ops->ctrl_data = ALS_IT(ALS_IT200MS) | HIGH_SENSITIVITY(1);
 	}
 	else

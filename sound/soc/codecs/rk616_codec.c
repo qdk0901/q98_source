@@ -24,12 +24,13 @@
 #include <linux/mfd/rk616.h>
 #include "rk616_codec.h"
 #include <mach/board.h>
+#include <plat/board.h>
 
 #ifdef CONFIG_RK_HEADSET_DET
 #include "../../../drivers/headset_observe/rk_headset.h"
 #endif
 
-#if 0
+#if 1
 #define	DBG(x...)	printk(KERN_INFO x)
 #else
 #define	DBG(x...)
@@ -975,14 +976,15 @@ static int rk616_playback_path_put(struct snd_kcontrol *kcontrol,
 	if (rk616 && rk616->spk_ctl_gpio != INVALID_GPIO) {
 		DBG("%s : set spk ctl gpio LOW\n", __func__);
 		gpio_set_value(rk616->spk_ctl_gpio, GPIO_LOW);
-		msleep(150);
+
 	}
 
 	if (rk616 && rk616->hp_ctl_gpio != INVALID_GPIO) {
 		DBG("%s : set hp ctl gpio LOW\n", __func__);
 		gpio_set_value(rk616->hp_ctl_gpio, GPIO_LOW);
-	}
 
+	}
+	
 	if(get_hdmi_state())
 		return 0;
 		
@@ -1123,7 +1125,7 @@ static int rk616_capture_path_put(struct snd_kcontrol *kcontrol,
 		break;
 	case Hands_Free_Mic:
 		if (rk616 && rk616->mic_sel_gpio != INVALID_GPIO) {
-			DBG("%s : set mic sel gpio HIGH\n", __func__);
+			DBG("%s : set mic sel gpio LOW\n", __func__);
 			gpio_set_value(rk616->mic_sel_gpio, GPIO_LOW);
 		}
 		break;
@@ -1268,10 +1270,18 @@ static int rk616_voice_call_path_put(struct snd_kcontrol *kcontrol,
 
 		snd_soc_update_bits(codec, RK616_PGA_AGC_CTL,
 			0x0f, 0x09); //set for capture pop noise
-		snd_soc_update_bits(codec, RK616_MIXINL_CTL,
-			RK616_MIL_F_IN3L | RK616_MIL_MUTE, 0); //IN3L to MIXINL, unmute IN3L
-		snd_soc_update_bits(codec, RK616_MIXINL_VOL2,
-			RK616_MIL_F_IN3L_VOL_MASK, 7); //IN3L to MIXINL vol
+		
+		if (get_board_type() == BOARD_FINE9) {
+			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+				RK616_MIL_F_IN1P | RK616_MIL_MUTE, 0); //IN1P to MIXINL, unmute IN3L
+			snd_soc_update_bits(codec, RK616_MIXINL_VOL1,
+				RK616_MIL_F_IN1P_VOL_MASK, 7); //IN1P to MIXINL vol
+		} else {
+			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+				RK616_MIL_F_IN3L | RK616_MIL_MUTE, 0); //IN3L to MIXINL, unmute IN3L
+			snd_soc_update_bits(codec, RK616_MIXINL_VOL2,
+				RK616_MIL_F_IN3L_VOL_MASK, 7); //IN3L to MIXINL vol
+		}
 		snd_soc_update_bits(codec, RK616_PGAL_CTL,
 			0xff, 0x9f); //PU unmute PGAL,PGAL vol
 		snd_soc_update_bits(codec, RK616_HPMIX_CTL,
@@ -2691,6 +2701,8 @@ static struct platform_driver rk616_codec_driver = {
 
 static __init int rk616_modinit(void)
 {
+	if (!board_use_rk616_codec())
+		return -ENODEV;
 	rk616_get_parameter();
 	return platform_driver_register(&rk616_codec_driver);
 }

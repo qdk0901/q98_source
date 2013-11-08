@@ -2842,7 +2842,7 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 
 #if defined (CONFIG_LS_CM3232)
 	{
-		.type          = "lightsensor",
+		.type          = "light_cm3232",
 		.addr          = 0x10,
 		.flags         = 0,
 		.platform_data = &cm3232_info,
