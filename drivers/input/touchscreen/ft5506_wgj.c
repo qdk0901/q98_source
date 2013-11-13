@@ -391,13 +391,14 @@ static int fts_read_data(void)
 	else
 		printk(KERN_ERR "get fingers failed!\n");
 
-  //touch_point_num = 10;
+	if (pdata->touch_points_num_fix)
+  	touch_point_num = 10;
 
 	if(touch_point_num > CFG_MAX_POINT_NUM)
 		printk("[Warning],+++++Touch number[%d] readed is larger than max point number+++++++++++++\n",touch_point_num);
 	
 	i_count = 0;
-
+	
 	if(touch_point_num != 0)
 	{
 		buf[0] = 3;//ADDR

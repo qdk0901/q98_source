@@ -30,7 +30,7 @@
 #include "../../../drivers/headset_observe/rk_headset.h"
 #endif
 
-#if 1
+#if 0
 #define	DBG(x...)	printk(KERN_INFO x)
 #else
 #define	DBG(x...)
@@ -1274,7 +1274,7 @@ static int rk616_voice_call_path_put(struct snd_kcontrol *kcontrol,
 		if (get_board_type() == BOARD_FINE9) {
 			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
 				RK616_MIL_F_IN1P | RK616_MIL_MUTE, 0); //IN1P to MIXINL, unmute IN3L
-			snd_soc_update_bits(codec, RK616_MIXINL_VOL1,
+			snd_soc_update_bits(codec, RK616_MIXINL_VOL2,
 				RK616_MIL_F_IN1P_VOL_MASK, 7); //IN1P to MIXINL vol
 		} else {
 			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
@@ -1282,15 +1282,25 @@ static int rk616_voice_call_path_put(struct snd_kcontrol *kcontrol,
 			snd_soc_update_bits(codec, RK616_MIXINL_VOL2,
 				RK616_MIL_F_IN3L_VOL_MASK, 7); //IN3L to MIXINL vol
 		}
+		snd_soc_update_bits(codec, RK616_SPKL_CTL,
+			RK616_VOL_MASK, 0); //, volume (bit 0-4)
+		snd_soc_update_bits(codec, RK616_SPKR_CTL,
+			RK616_VOL_MASK, 0);
+			
 		snd_soc_update_bits(codec, RK616_PGAL_CTL,
 			0xff, 0x9f); //PU unmute PGAL,PGAL vol
 		snd_soc_update_bits(codec, RK616_HPMIX_CTL,
 			RK616_HML_F_PGAL | RK616_HMR_F_PGAL, 0);
 
-		snd_soc_update_bits(codec, RK616_SPKL_CTL,
-			RK616_VOL_MASK, HPOUT_VOLUME); //, volume (bit 0-4)
-		snd_soc_update_bits(codec, RK616_SPKR_CTL,
-			RK616_VOL_MASK, HPOUT_VOLUME);
+		//anti headset pop noise
+		int i;
+		for (i = 0; i < HPOUT_VOLUME; i++) {
+			snd_soc_update_bits(codec, RK616_SPKL_CTL,
+				RK616_VOL_MASK, i); //, volume (bit 0-4)
+			snd_soc_update_bits(codec, RK616_SPKR_CTL,
+				RK616_VOL_MASK, i);
+			msleep(1);
+		}
 
 		if (rk616 && rk616->hp_ctl_gpio != INVALID_GPIO) {
 			DBG("%s : set hp ctl gpio HIGH\n", __func__);

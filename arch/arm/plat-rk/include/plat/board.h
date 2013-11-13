@@ -242,6 +242,7 @@ struct ft5506_platform_data {
   	void		(*tp_exit_init)(int state);
   	int 		reverse_x;
   	int 		reverse_y;
+  	int 		touch_points_num_fix;
 };
 struct cm3217_platform_data {
 	int irq_pin;

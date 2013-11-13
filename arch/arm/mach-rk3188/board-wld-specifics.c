@@ -613,6 +613,9 @@ static void q98_v2_ipad3_override()
 	rk616_pdata.spk_ctl_gpio = RK30_PIN0_PA0;
 	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
 	rk616_pdata.hp_ctl_gpio = INVALID_GPIO;
+	rk616_pdata.hdmi_irq = INVALID_GPIO;
+  rk616_pdata.lcd0_func = UNUSED;
+  rk616_pdata.lcd1_func = INPUT;
 	#endif
 }
 
@@ -681,6 +684,8 @@ static void fine9_override()
   
   key_button[0].code = KEY_VOLUMEUP;
   key_button[2].code = KEY_VOLUMEDOWN;
+  
+  rt3261_info.codec_en_gpio = RK30_PIN0_PD7;
 }
 
 // q98v3 for gsd and chuangqi
@@ -737,26 +742,28 @@ static void q98v3_override()
 	
 	signed char orientation[9] = {1, 0, 0, 0, -1, 0, 0, 0, -1};
 	memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);
-	
-	if (board_sub_type == BOARD_CHUANGQI) {
-		signed char orientation[9] = {-1, 0, 0, 0, 1, 0, 0, 0, -1};
-		memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);			
-	}
-	
+		
 		//ldo6
   act8846_ldo_info[5].min_uv = 1800000;
   act8846_ldo_info[5].max_uv = 1800000;
  
 #if defined (CONFIG_MFD_RK616)
-  rk616_pdata.lcd1_func = UNUSED;
+  //rk616_pdata.lcd1_func = UNUSED;
+  rk616_pdata.lcd0_func = UNUSED;
+  rk616_pdata.lcd1_func = INPUT;
   rk616_pdata.hdmi_irq = INVALID_GPIO;
   rk616_pdata.spk_ctl_gpio = RK30_PIN0_PA0;
 	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
 	rk616_pdata.hp_ctl_gpio = INVALID_GPIO;
 #endif
 
-	if (board_sub_type == BOARD_CHUANGQI)
+	if (board_sub_type == BOARD_CHUANGQI) {
+		signed char orientation[9] = {-1, 0, 0, 0, 1, 0, 0, 0, -1};
+		memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);			
 		timed_gpios[0].adjust_time = 200;
+		ft5506_info.touch_points_num_fix = 1;
+	}
+	
 }
 
 int board_use_rk616_codec()
@@ -826,7 +833,7 @@ int board_rotate_screen()
 
 int board_custom_boot_logo()
 {
-	return 1;	
+	return 0;	
 }
 
 extern void camera_dynamic_init();

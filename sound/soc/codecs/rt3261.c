@@ -74,6 +74,7 @@ extern void rt5623_off(void);
 
 #if defined (CONFIG_SND_SOC_ES8323_PCM)
 extern void es8323_on(void);
+extern void es8323_on_headset();
 extern void es8323_off(void);
 #endif
 
@@ -966,10 +967,14 @@ static int rt3261_modem_input_switch_put(struct snd_kcontrol *kcontrol,
 	struct rt3261_priv *rt3261 = snd_soc_codec_get_drvdata(codec);
 
 	if(ucontrol->value.integer.value[0]) {
-		es8323_on( );
+		if (ucontrol->value.integer.value[0] == 1)
+			es8323_on();
+		else
+			es8323_on_headset();
+			
 		rt3261->modem_is_open = 1;	
 	}else {
-		es8323_off( );
+		es8323_off();
 		rt3261->modem_is_open = 0;
 	} 
 
