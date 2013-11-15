@@ -245,6 +245,7 @@ struct rk616_platform_data {
 	int hdmi_irq;
 	int spk_ctl_gpio;
 	int hp_ctl_gpio;
+	int rcv_ctl_gpio;
 	int mic_sel_gpio;
 };
 
@@ -281,6 +282,7 @@ struct mfd_rk616 {
 	struct clk *mclk;
 	u64 pll0_rate;
 	u64 pll1_rate;
+	unsigned int resume; 	
 	struct dentry *debugfs_dir;
 	int (*read_dev)(struct mfd_rk616 *rk616,u16 reg,u32 *pval);
 	int (*write_dev)(struct mfd_rk616 *rk616,u16 reg,u32 *pval);

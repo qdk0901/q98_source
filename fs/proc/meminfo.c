@@ -51,7 +51,13 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 
 	for (lru = LRU_BASE; lru < NR_LRU_LISTS; lru++)
 		pages[lru] = global_page_state(NR_LRU_BASE + lru);
-
+		
+	int free_mem = K(i.freeram);
+	if (free_mem > 300000) {
+		free_mem = ((unsigned long)ddr_get_cap() >> 9) - (((unsigned long)ddr_get_cap() >> 10) - free_mem);
+	} else {
+		free_mem = free_mem * 2;	
+	}
 	/*
 	 * Tagged format, for easy grepping and expansion.
 	 */
@@ -112,12 +118,20 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
 #ifdef CONFIG_RK29_MEM_SIZE_M
 		(unsigned long)CONFIG_RK29_MEM_SIZE_M * 1024,
 #else
-		(unsigned long)ddr_get_cap() >> 10,
+		#if 1 //display fake memory size aquired by customer
+			(unsigned long)ddr_get_cap() >> 10,
+		#else
+			(unsigned long)ddr_get_cap() >> 9,
+		#endif
 #endif
 #else
 		K(i.totalram),
 #endif
-		K(i.freeram),
+		#if 1 //display fake memory size aquired by customer
+			K(i.freeram),
+		#else
+			free_mem,
+		#endif
 		K(i.bufferram),
 		K(cached),
 		K(total_swapcache_pages),

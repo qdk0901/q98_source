@@ -749,8 +749,8 @@ static void q98v3_override()
  
 #if defined (CONFIG_MFD_RK616)
   //rk616_pdata.lcd1_func = UNUSED;
-  rk616_pdata.lcd0_func = UNUSED;
-  rk616_pdata.lcd1_func = INPUT;
+  rk616_pdata.lcd0_func = INPUT;
+  rk616_pdata.lcd1_func = UNUSED;
   rk616_pdata.hdmi_irq = INVALID_GPIO;
   rk616_pdata.spk_ctl_gpio = RK30_PIN0_PA0;
 	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
@@ -797,6 +797,9 @@ int board_rk616_i2c_channel()
 
 int board_audio_path_fix()
 {
+	if (force_use_codec == FORCE_USE_CODEC_RT3261)
+		return 0;
+		
 	if (board_type == BOARD_Q910_101 || board_type == BOARD_Q910_IPAD2 || board_type == BOARD_Q910_IPAD3)
 		return 1;
 	
