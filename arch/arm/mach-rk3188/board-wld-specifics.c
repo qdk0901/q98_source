@@ -730,7 +730,7 @@ static void q98v3_override()
 		rk_headset_info.Headset_gpio = RK30_PIN0_PA1;
 		rk_headset_info.headset_in_type = HEADSET_IN_LOW;
 		rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
-		rk_headset_info.Hook_down_type = HOOK_DOWN_LOW;			
+		rk_headset_info.Hook_down_type = HOOK_DOWN_HIGH;			
 	}
 	//gpio_request(RK30_PIN0_PA1, NULL);
 	//gpio_direction_input(RK30_PIN0_PA1);
@@ -756,7 +756,7 @@ static void q98v3_override()
 	rk616_pdata.mic_sel_gpio = RK30_PIN0_PC0;
 	rk616_pdata.hp_ctl_gpio = INVALID_GPIO;
 #endif
-
+	
 	if (board_sub_type == BOARD_CHUANGQI) {
 		signed char orientation[9] = {-1, 0, 0, 0, 1, 0, 0, 0, -1};
 		memcpy(mma8452_info.orientation, orientation, sizeof(signed char) * 9);			

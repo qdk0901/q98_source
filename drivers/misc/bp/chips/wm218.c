@@ -62,9 +62,8 @@ static int bp_active(struct bp_private_data *bp, int enable)
 		gpio_set_value(bp->ops->bp_en, GPIO_LOW);
 	} else {
 		printk("wm218 power off \n");
-		//gpio_set_value(bp->ops->bp_en, GPIO_HIGH);
-		//msleep(4000);
 		gpio_set_value(bp->ops->bp_en, GPIO_HIGH);
+		msleep(3000);
 		gpio_set_value(bp->ops->bp_power, GPIO_LOW);	
 		gpio_set_value(bp->ops->bp_reset, GPIO_HIGH);
 	}
@@ -85,14 +84,17 @@ static int bp_init(struct bp_private_data *bp)
 {
 	int result = 0;	
 	gpio_direction_output(bp->ops->bp_power,GPIO_LOW);
-	gpio_direction_output(bp->ops->bp_en,GPIO_LOW);
-	gpio_direction_output(bp->ops->bp_reset,GPIO_LOW);
+	gpio_direction_output(bp->ops->bp_en,GPIO_HIGH);
+	gpio_direction_output(bp->ops->bp_reset,GPIO_HIGH);
 	gpio_direction_input(bp->ops->bp_wakeup_ap);
 	return result;
 }
 
 static int bp_reset(struct bp_private_data *bp)
 {
+	gpio_set_value(bp->ops->bp_reset, GPIO_HIGH);
+	msleep(1000);
+	gpio_set_value(bp->ops->bp_reset, GPIO_LOW);
 	// do not has reset
 	return 0;
 }

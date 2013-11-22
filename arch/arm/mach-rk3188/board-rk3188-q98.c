@@ -1973,6 +1973,46 @@ static struct platform_device device_mt6622 = {
 };	
 #endif
 
+#if defined(CONFIG_HALL_SENSOR)
+#include "wld_hall_sensor.h"
+
+static void hall_sensor_init(int gpio)
+{
+	int ret;
+	ret = gpio_request(gpio, NULL);
+	if(ret) 
+		return ret;
+
+	gpio_pull_updown(gpio, PullDisable);
+	gpio_direction_input(gpio);
+	return 0;
+}
+
+static void action_for_hall_sensor(int active)
+{
+	if (active) {
+		gpio_set_value(BL_EN_PIN, GPIO_LOW);
+	} else {
+		gpio_set_value(BL_EN_PIN, GPIO_HIGH);		
+	}
+}
+
+static struct hall_sensor_pdata hall_data = {
+	.hall_sensor_gpio = RK30_PIN0_PA0,
+	.hall_sensor_active_type = HALL_SENSOR_ACTIVE_LOW,
+	.hall_sensor_io_init = hall_sensor_init,
+	.action_for_hall_sensor = action_for_hall_sensor,
+};
+
+static struct platform_device hall_sensor_device = {
+  .name   = "hall_sensor",
+	.id     = -1,
+	.dev    = {
+		.platform_data = &hall_data,
+	},
+};
+#endif
+
 static struct platform_device *devices[] __initdata = {
 #ifdef CONFIG_ION
 	&device_ion,
@@ -2026,6 +2066,10 @@ static struct platform_device *devices[] __initdata = {
 #endif
 #if defined (CONFIG_RK_HEADSET_DET) || defined (CONFIG_RK_HEADSET_IRQ_HOOK_ADC_DET)
 	&rk_device_headset,
+#endif
+
+#if defined (CONFIG_HALL_SENSOR)
+	&hall_sensor_device,
 #endif
 };
 

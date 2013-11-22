@@ -26,3 +26,5 @@ board-$(CONFIG_MACH_RK3188_DS1006H) += board-rk3188-ds1006h.o
 board-$(CONFIG_MACH_RK3188_PHONEPAD) += ../mach-rk30/board-rk3168-phonepad.o
 board-$(CONFIG_MACH_RK3188_Q98)	+= board-rk3188-q98.o
 board-$(CONFIG_BOARD_DETECT)  += board-rk3188-board-detect.o
+
+obj-$(CONFIG_HALL_SENSOR) += wld_hall_sensor.o

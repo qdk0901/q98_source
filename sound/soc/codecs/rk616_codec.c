@@ -25,7 +25,7 @@
 #include "rk616_codec.h"
 #include <mach/board.h>
 
-#if 0
+#if 1
 #define	DBG(x...)	printk(KERN_INFO x)
 #else
 #define	DBG(x...)
@@ -1570,6 +1570,9 @@ static int rk616_voice_call_path_put(struct snd_kcontrol *kcontrol,
 			rk616_codec_power_up(RK616_CODEC_PLAYBACK);
 	}
 
+	if (rk616->voice_call_path == RCV)
+		rk616->voice_call_path = SPK_PATH;
+		
 	switch (rk616->voice_call_path) {
 	case OFF:
 		if (pre_path != RCV &&
@@ -2957,6 +2960,8 @@ static struct platform_driver rk616_codec_driver = {
 
 static __init int rk616_modinit(void)
 {
+	if (!board_use_rk616_codec())
+		return -ENODEV;
 	rk616_get_parameter();
 	return platform_driver_register(&rk616_codec_driver);
 }

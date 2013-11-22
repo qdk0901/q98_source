@@ -423,6 +423,19 @@ static ssize_t bp_status_write(struct class *cls, struct class_attribute *attr, 
 	}	   
 	return result; 
 }
+
+#include <linux/workqueue.h>
+static struct delayed_work modem_poweron_delayed_work;
+
+
+static void modem_poweron_work(struct work_struct *work)
+{
+	if(g_bp->ops->active) {
+		g_bp->ops->active(g_bp, 1);
+		g_bp->status = BP_ON;
+	}
+}
+
 //static CLASS_ATTR(bp_status, 0777, bp_status_read, bp_status_write);
 static int bp_probe(struct platform_device *pdev)
 {
@@ -534,10 +547,13 @@ static int bp_probe(struct platform_device *pdev)
 	platform_set_drvdata(pdev, bp);	
 	
 	//set bp default on
-	if(bp->ops->active) {
-		bp->ops->active(bp, 1);
-		bp->status = BP_ON;
-	}
+	//if(bp->ops->active) {
+	//	bp->ops->active(bp, 1);
+	//	bp->status = BP_ON;
+	//}
+	
+	INIT_DELAYED_WORK(&modem_poweron_delayed_work, modem_poweron_work);
+	schedule_delayed_work(&modem_poweron_delayed_work, msecs_to_jiffies(5000));
 	
 	printk("%s:init success\n",__func__);
 	return result;

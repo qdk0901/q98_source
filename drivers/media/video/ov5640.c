@@ -1569,6 +1569,9 @@ void camera_ov5640_override()
 	
 	register_override(sensor_preview_data, 0x3820, 0x47);
 	register_override(sensor_preview_data, 0x3821, 0x01);
+	
+	register_override(sensor_720p, 0x3820, 0x47);
+	register_override(sensor_720p, 0x3821, 0x01);
 }
 
  
