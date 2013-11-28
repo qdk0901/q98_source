@@ -202,7 +202,7 @@ static struct reginfo sensor_init_data[] =
 	{0x3034, 0x1a},
 	{0x3035, 0x21},
 	{0x3036, 0x46},
-	{0x3037, 0x13},
+	{0x3037, 0x16},
 	{0x3108, 0x01},
 	{0x3630, 0x36},
 	{0x3631, 0x0e},
@@ -2519,8 +2519,12 @@ static int sensor_init(struct v4l2_subdev *sd, u32 val)
 
     /* sensor sensor information for initialization  */
 	qctrl = soc_camera_find_qctrl(&sensor_ops, V4L2_CID_DO_WHITE_BALANCE);
-	if (qctrl)
-    	sensor->info_priv.whiteBalance = qctrl->default_value;
+	if (qctrl) {
+  		sensor->info_priv.whiteBalance = qctrl->default_value;
+			sensor_set_whiteBalance(icd, qctrl,sensor->info_priv.whiteBalance);	
+	}
+	
+	msleep(500);
 	qctrl = soc_camera_find_qctrl(&sensor_ops, V4L2_CID_BRIGHTNESS);
 	if (qctrl)
     	sensor->info_priv.brightness = qctrl->default_value;

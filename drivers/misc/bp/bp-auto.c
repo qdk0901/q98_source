@@ -553,7 +553,7 @@ static int bp_probe(struct platform_device *pdev)
 	//}
 	
 	INIT_DELAYED_WORK(&modem_poweron_delayed_work, modem_poweron_work);
-	schedule_delayed_work(&modem_poweron_delayed_work, msecs_to_jiffies(5000));
+	schedule_delayed_work(&modem_poweron_delayed_work, msecs_to_jiffies(0));
 	
 	printk("%s:init success\n",__func__);
 	return result;

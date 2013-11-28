@@ -1447,6 +1447,27 @@ sensor_remove_default_code();
 
 sensor_driver_default_module_code();
 
+static int register_override(struct rk_sensor_reg *regarray, int reg, int value)
+{
+	int i = 0;
+	while (regarray[i].reg != SEQCMD_END) {
+		if (regarray[i].reg == reg) {
+			printk("ov5640 override reg %04x with value %02x\n", reg, value);
+			regarray[i].val = value;
+		}
+		i++;
+	}
+}
+
+void camera_gc2035_override()
+{
+	register_override(sensor_init_data, 0x9a, 0x07);
+	
+	register_override(sensor_fullres_lowfps_data, 0x9a, 0x07);
+	
+	register_override(sensor_preview_data, 0x9a, 0x07);
+}
+
 
 
 

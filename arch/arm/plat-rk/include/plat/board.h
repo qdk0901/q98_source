@@ -600,5 +600,6 @@ int get_host_drv_pin();
 int get_otg_drv_pin();
 int board_rotate_screen();
 int board_custom_boot_logo();
+extern void swap_front_back_camera();
 
 #endif

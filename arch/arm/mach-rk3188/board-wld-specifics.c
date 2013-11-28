@@ -198,6 +198,9 @@ static void q97s_ipad2_override()
 	rk_headset_info.headset_in_type = HEADSET_IN_LOW;
 	rk_headset_info.Hook_gpio = RK30_PIN3_PD7;
 	rk_headset_info.Hook_down_type = HOOK_DOWN_HIGH;
+
+	vtl_ts_config_info.revert_x_flag = 0;
+	vtl_ts_config_info.revert_y_flag = 0;
 	
 }
 

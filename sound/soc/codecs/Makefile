@@ -93,7 +93,7 @@ snd-soc-wm-hubs-objs := wm_hubs.o
 snd-soc-rk1000-objs := rk1000_codec.o
 snd-soc-jz4740-codec-objs := jz4740.o
 snd-soc-rk610-objs := rk610_codec.o
-snd-soc-rk616-objs := rk616_codec.o
+snd-soc-rk616-objs := rk616_codec_old.o
 
 snd-soc-rt3261-objs := rt3261.o rt3261-dsp.o rt3261_ioctl.o rt_codec_ioctl.o
 snd-soc-rt3224-objs := rt3261.o rt3261_ioctl.o rt_codec_ioctl.o

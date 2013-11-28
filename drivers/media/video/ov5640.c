@@ -1563,6 +1563,7 @@ void camera_ov5640_override()
 {
 	register_override(sensor_init_data, 0x3820, 0x47);
 	register_override(sensor_init_data, 0x3821, 0x01);
+	register_override(sensor_init_data, 0x3037, 0x14);
 	
 	register_override(sensor_fullres_lowfps_data, 0x3820, 0x47);
 	register_override(sensor_fullres_lowfps_data, 0x3821, 0x01);

@@ -101,13 +101,15 @@ static int rk29_hw_params(struct snd_pcm_substream *substream,
 	#if defined(CONFIG_RK616_USE_MCLK_12M)
 	extern int hdmi_get_hotplug(void);
 	if (hdmi_get_hotplug() && pll_out != 12000000) {
-		DBG("%s : HDMI is in, set mclk to 12Mn",__FUNCTION__);
-		pll_out = 12000000;
+		DBG("%s : HDMI is in, don't set sys clk %u\n",__FUNCTION__, pll_out);
+		goto __setdiv;
 	}
 	#endif
 	
 	DBG("Enter:%s, %d, rate=%d\n", __FUNCTION__, __LINE__, params_rate(params));
+	snd_soc_dai_set_sysclk(cpu_dai, 0, pll_out, 0);
 
+__setdiv:
 	/*Set the system clk for codec*/
 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, pll_out, SND_SOC_CLOCK_IN);
 	if (ret < 0)
@@ -115,8 +117,7 @@ static int rk29_hw_params(struct snd_pcm_substream *substream,
 		DBG("rk29_hw_params_rt3261:failed to set the sysclk for codec side\n"); 
 		return ret;
 	}
-
-	snd_soc_dai_set_sysclk(cpu_dai, 0, pll_out, 0);
+	
 	snd_soc_dai_set_clkdiv(cpu_dai, ROCKCHIP_DIV_BCLK, (pll_out/4)/params_rate(params)-1);
 	snd_soc_dai_set_clkdiv(cpu_dai, ROCKCHIP_DIV_MCLK, 3);
 
@@ -162,25 +163,25 @@ static int rt3261_voice_hw_params(struct snd_pcm_substream *substream,
 	#if defined(CONFIG_RK616_USE_MCLK_12M)
 	extern int hdmi_get_hotplug(void);
 	if (hdmi_get_hotplug() && pll_out != 12000000) {
-		DBG("%s : HDMI is in, set mclk to 12Mn",__FUNCTION__);
-		pll_out = 12000000;
+		DBG("%s : HDMI is in, don't set sys clk %u\n",__FUNCTION__, pll_out);
+		goto __setdiv;
 	}
 	#endif
 	
 	DBG("Enter:%s, %d, rate=%d\n", __FUNCTION__, __LINE__, params_rate(params));
+	
+	snd_soc_dai_set_sysclk(cpu_dai, 0, pll_out, 0);
 
+__setdiv:
 	/*Set the system clk for codec*/
 	snd_soc_dai_set_pll(codec_dai, 0, RT3261_PLL1_S_MCLK, pll_out, 24576000);
 
  	ret = snd_soc_dai_set_sysclk(codec_dai, RT3261_SCLK_S_PLL1, 24576000, SND_SOC_CLOCK_IN);
-
-
 	if (ret < 0) {
 		printk("rk29_hw_params_rt3261:failed to set the sysclk for codec side\n"); 
 		return ret;
 	}
-
-	snd_soc_dai_set_sysclk(cpu_dai, 0, pll_out, 0);
+	
 	snd_soc_dai_set_clkdiv(cpu_dai, ROCKCHIP_DIV_BCLK, (pll_out/4)/params_rate(params)-1);
 	snd_soc_dai_set_clkdiv(cpu_dai, ROCKCHIP_DIV_MCLK, 3);
 

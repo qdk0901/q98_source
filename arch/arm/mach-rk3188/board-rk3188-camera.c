@@ -276,13 +276,10 @@ static rk_sensor_user_init_data_s rk_init_data_sensor[RK_CAM_NUM] =
 #include "../../../drivers/media/video/rk30_camera.c"
 
 extern void camera_ov5640_override();
+extern void camera_gc2035_override();
 
-void camera_dynamic_init()
+void swap_front_back_camera()
 {
-	int board_type = get_board_type();
-	int board_sub_type = get_board_sub_type();
-	
-	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V2_IPAD3) {
 #if SUPPORT_MORE_CAMERA
 		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
 		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
@@ -291,11 +288,22 @@ void camera_dynamic_init()
 #else
 		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
 		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
-#endif
-		
-		if (board_type == BOARD_FINE9)
+#endif	
+}
+
+void camera_dynamic_init()
+{
+	//swap_front_back_camera();
+	
+	int board_type = get_board_type();
+	int board_sub_type = get_board_sub_type();
+	
+	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V2_IPAD3) {
+		swap_front_back_camera();		
+		if (board_type == BOARD_FINE9) {
 			new_camera[1].mirror = 0x3; // upsize down
-			
+			camera_gc2035_override();
+		}
 	}
 	
 	if (board_type == BOARD_Q98_V3 && board_sub_type == BOARD_CHUANGQI) {
@@ -305,15 +313,7 @@ void camera_dynamic_init()
 	}
 	
 	if (board_type == BOARD_Q98_V3 && board_sub_type != BOARD_CHUANGQI) {
-#if SUPPORT_MORE_CAMERA
-		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
-		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
-		new_camera[2].io.gpio_powerdown = RK30_PIN3_PB4;
-		new_camera[3].io.gpio_powerdown = RK30_PIN3_PB5;
-#else
-		new_camera[0].io.gpio_powerdown = RK30_PIN3_PB4;
-		new_camera[1].io.gpio_powerdown = RK30_PIN3_PB5;
-#endif		
+		swap_front_back_camera();		
 	}
 }
 #endif /* CONFIG_VIDEO_RK29 */

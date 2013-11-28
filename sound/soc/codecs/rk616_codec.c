@@ -25,7 +25,7 @@
 #include "rk616_codec.h"
 #include <mach/board.h>
 
-#if 1
+#if 0
 #define	DBG(x...)	printk(KERN_INFO x)
 #else
 #define	DBG(x...)
@@ -48,6 +48,8 @@
 #define  SPKOUT_VOLUME    24 //0~31
 #define  HPOUT_VOLUME     24 //0~31
 #endif
+
+#define VOICE_CALL_VOLUME 31
 
 /* volume setting
  *  0: -18dB
@@ -725,6 +727,11 @@ static int rk616_codec_power_up(int type)
 		printk("%s : rk616_priv or rk616_priv->codec is NULL\n", __func__);
 		return -EINVAL;
 	}
+	
+	if (board_audio_path_fix()) {
+		gpio_direction_output(RK30_PIN0_PA1, 0);
+		msleep(150);
+	}
 
 	codec = rk616->codec;
 
@@ -761,31 +768,54 @@ static int rk616_codec_power_up(int type)
 	if (type & RK616_CODEC_INCALL) {
 		snd_soc_update_bits(codec, RK616_PGA_AGC_CTL,
 			0x0f, 0x09); //set for capture pop noise
-		if (rk616->modem_input_enable != OFF)
-			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
-				RK616_MIL_F_IN1P | RK616_MIL_MUTE | RK616_MIL_PWRD,
-				0); //IN3L to MIXINL, unmute IN3L
-		else
-			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
-				RK616_MIL_F_IN1P | RK616_MIL_PWRD,
-				0); //IN3L to MIXINL
+		if (rk616->modem_input_enable != OFF) {
+			if (get_board_type() == BOARD_FINE9) {
+				snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+					RK616_MIL_F_IN1P | RK616_MIL_MUTE | RK616_MIL_PWRD,
+					0); //IN3L to MIXINL, unmute IN3L
+			} else {
+				snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+					RK616_MIL_F_IN3L | RK616_MIL_MUTE | RK616_MIL_PWRD,
+					0); //IN3L to MIXINL, unmute IN3L	
+			}
+		} else {
+			if (get_board_type() == BOARD_FINE9) {
+				snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+					RK616_MIL_F_IN1P | RK616_MIL_PWRD,
+					0); //IN3L to MIXINL
+			} else {
+				snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+					RK616_MIL_F_IN3L | RK616_MIL_MUTE | RK616_MIL_PWRD,
+					0); //IN3L to MIXINL, unmute IN3L
+			}
+		}
+		
+		if (get_board_type() == BOARD_FINE9) {
+				snd_soc_update_bits(codec, RK616_MIXINL_VOL1,
+					RK616_MIL_F_IN1P_VOL_MASK, 0); //IN3L to MIXINL vol	
+		} else {
+				snd_soc_update_bits(codec, RK616_MIXINL_VOL2,
+					RK616_MIL_F_IN3L_VOL_MASK, 0); //IN3L to MIXINL vol	
+		}
+		
 		snd_soc_update_bits(codec, RK616_PWR_ADD1,
 			RK616_ADC_PWRD | RK616_DIFFIN_MIR_PGAR_RLPWRD |
 			RK616_MIC1_MIC2_MIL_PGAL_RLPWRD |
 			RK616_ADCL_RLPWRD | RK616_ADCR_RLPWRD, 0);
-		snd_soc_update_bits(codec, RK616_MIXINL_VOL1,
-			RK616_MIL_F_IN1P_VOL_MASK, 0); //IN3L to MIXINL vol
+
 		snd_soc_update_bits(codec, RK616_PGAL_CTL,
 			0xff, 0x15); //PU unmute PGAL,PGAL vol
 		snd_soc_update_bits(codec, RK616_HPMIX_CTL,
 			RK616_HML_F_PGAL | RK616_HMR_F_PGAL, 0);
 		//set min volume for incall voice volume setting
 		snd_soc_update_bits(codec, RK616_SPKL_CTL,
-			RK616_VOL_MASK, 0); //, volume (bit 0-4)
+			RK616_VOL_MASK, VOICE_CALL_VOLUME); //, volume (bit 0-4)
 		snd_soc_update_bits(codec, RK616_SPKR_CTL,
-			RK616_VOL_MASK, 0);
+			RK616_VOL_MASK, VOICE_CALL_VOLUME);
 	}
 
+	if (board_audio_path_fix())
+			gpio_direction_input(RK30_PIN0_PA1);
 	return 0;
 }
 
@@ -798,6 +828,11 @@ static int rk616_codec_power_down(int type)
 	if (!rk616 || !rk616->codec) {
 		printk("%s : rk616_priv or rk616_priv->codec is NULL\n", __func__);
 		return -EINVAL;
+	}
+	
+	if (board_audio_path_fix()) {
+		gpio_direction_output(RK30_PIN0_PA1, 0);
+		msleep(150);
 	}
 
 	codec = rk616->codec;
@@ -834,15 +869,26 @@ static int rk616_codec_power_down(int type)
 			RK616_HML_F_PGAL | RK616_HMR_F_PGAL);
 		snd_soc_update_bits(codec, RK616_PGA_AGC_CTL,
 			0x0f, 0x0c);
-		snd_soc_update_bits(codec, RK616_MIXINL_CTL,
-			RK616_MIL_F_IN1P | RK616_MIL_MUTE | RK616_MIL_PWRD,
-			RK616_MIL_F_IN1P | RK616_MIL_MUTE | RK616_MIL_PWRD);
-		snd_soc_update_bits(codec, RK616_MIXINL_VOL1,
-			RK616_MIL_F_IN1P_VOL_MASK, 0);
+			
+		if (get_board_type() == BOARD_FINE9) {
+			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+				RK616_MIL_F_IN1P | RK616_MIL_MUTE | RK616_MIL_PWRD,
+				RK616_MIL_F_IN1P | RK616_MIL_MUTE | RK616_MIL_PWRD);
+			snd_soc_update_bits(codec, RK616_MIXINL_VOL1,
+				RK616_MIL_F_IN1P_VOL_MASK, 0);
+		} else {
+			snd_soc_update_bits(codec, RK616_MIXINL_CTL,
+				RK616_MIL_F_IN3L | RK616_MIL_MUTE | RK616_MIL_PWRD,
+				RK616_MIL_F_IN3L | RK616_MIL_MUTE | RK616_MIL_PWRD);
+			snd_soc_update_bits(codec, RK616_MIXINL_VOL2,
+				RK616_MIL_F_IN3L_VOL_MASK, 0);	
+		}
 		snd_soc_update_bits(codec, RK616_PGAL_CTL,
 			0xff, 0xd5);
 	}
 
+	if (board_audio_path_fix())
+			gpio_direction_input(RK30_PIN0_PA1);
 	return 0;
 }
 static const DECLARE_TLV_DB_SCALE(out_vol_tlv, -3900, 150, 0);

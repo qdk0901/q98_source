@@ -125,10 +125,10 @@ static int light_report_value(struct input_dev *input, int data)
 {
 	unsigned char index = 0;
 	
-	if(data <= 10){
+	if(data <= 100){
 		index = 0;goto report;
 	}
-	else if(data <= 160){
+	else if(data <= 200){
 		index = 1;goto report;
 	}
 	else if(data <= 225){
