@@ -98,12 +98,14 @@ static int rk29_hw_params(struct snd_pcm_substream *substream,
 	}
 
 	/* MCLK must be 12M when RK616 HDMI is in */
+	#if defined(CONFIG_RK_HDMI)
 	#if defined(CONFIG_RK616_USE_MCLK_12M)
 	extern int hdmi_get_hotplug(void);
 	if (hdmi_get_hotplug() && pll_out != 12000000) {
 		DBG("%s : HDMI is in, don't set sys clk %u\n",__FUNCTION__, pll_out);
 		goto __setdiv;
 	}
+	#endif
 	#endif
 	
 	DBG("Enter:%s, %d, rate=%d\n", __FUNCTION__, __LINE__, params_rate(params));
@@ -160,12 +162,14 @@ static int rt3261_voice_hw_params(struct snd_pcm_substream *substream,
 	}
 
 	/* MCLK must be 12M when RK616 HDMI is in */
+	#if defined(CONFIG_RK_HDMI)
 	#if defined(CONFIG_RK616_USE_MCLK_12M)
 	extern int hdmi_get_hotplug(void);
 	if (hdmi_get_hotplug() && pll_out != 12000000) {
 		DBG("%s : HDMI is in, don't set sys clk %u\n",__FUNCTION__, pll_out);
 		goto __setdiv;
 	}
+	#endif
 	#endif
 	
 	DBG("Enter:%s, %d, rate=%d\n", __FUNCTION__, __LINE__, params_rate(params));

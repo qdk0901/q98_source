@@ -104,6 +104,24 @@ static struct rkcamera_platform_data new_camera[] = {
 	                0x42,
 	                0,
 	                24),
+	  new_camera_device_ex(RK29_CAM_SENSOR_HI253,
+										front,
+	                  INVALID_VALUE,
+	                  INVALID_VALUE,
+	                  INVALID_VALUE,
+	                  INVALID_VALUE,
+	                  INVALID_VALUE,
+	                  RK30_PIN3_PB5,
+	                  1, //active high
+	                  0, //flash attach
+	                  0x200000, //resolution 2MP
+	                  0x00,
+	                  3,
+	                  100000,
+	                  0x40,
+	                  0,
+	                  24
+	              ),
    new_camera_device_ex(RK29_CAM_SENSOR_SP2518,
    										front,
                       INVALID_VALUE,
@@ -122,6 +140,7 @@ static struct rkcamera_platform_data new_camera[] = {
                       0,
                       24
                   ),
+
 #else
    new_camera_device_ex(RK29_CAM_SENSOR_OV5640,
                         back,
@@ -298,7 +317,9 @@ void camera_dynamic_init()
 	int board_type = get_board_type();
 	int board_sub_type = get_board_sub_type();
 	
-	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 || board_type == BOARD_FINE9 || board_type == BOARD_Q98_V2_IPAD3) {
+	if (board_type == BOARD_Q98_IPAD2 || board_type == BOARD_Q98_IPAD3 
+		|| board_type == BOARD_FINE9 || board_type == BOARD_Q98_V2_IPAD3
+		|| board_type == BOARD_C5) {
 		swap_front_back_camera();		
 		if (board_type == BOARD_FINE9) {
 			new_camera[1].mirror = 0x3; // upsize down

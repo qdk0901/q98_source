@@ -2707,19 +2707,21 @@ void  rk30_pwm_resume_voltage_set(void)
 
 #if defined(CONFIG_NFC_DEVICES)
 
-#define NFC_IRQ_PIN RK30_PIN0_PD6
-#define NFC_ENABLE_PIN RK30_PIN0_PD4
-#define NFC_MODE_SELECT RK30_PIN0_PD5
+#define NFC_IRQ_PIN RK30_PIN1_PB4
+#define NFC_ENABLE_PIN RK30_PIN0_PD6
+#define NFC_MODE_SELECT RK30_PIN3_PD4
 
 
 static int nfc_request_resources()
 {
+	iomux_set(GPIO1_B4);
+	iomux_set(GPIO3_D4);
+	iomux_set(GPIO0_D6);
 	if (gpio_request(NFC_IRQ_PIN, "NFC_IRQ") < 0) {
 		printk("request nfc irq failed\n");
 		return -1;
 	}
 	
-	iomux_set(GPIO0_D4);
 	//rk30_mux_api_set(GPIO0D4_I2S22CHSDI_SMCADDR0_NAME, GPIO0D_GPIO0D4);
 	gpio_pull_updown(NFC_IRQ_PIN, GPIOPullDown);
 	gpio_direction_input(NFC_IRQ_PIN);
@@ -2729,8 +2731,6 @@ static int nfc_request_resources()
 		return -1;	
 	}
 	
-	iomux_set(GPIO0_D2);
-	//rk30_mux_api_set(GPIO0D2_I2S22CHLRCKRX_SMCOEN_NAME, GPIO0D_GPIO0D2);
 	gpio_pull_updown(NFC_ENABLE_PIN, GPIOPullUp);//pullup
   gpio_direction_output(NFC_ENABLE_PIN, GPIO_LOW);
 
@@ -2739,8 +2739,7 @@ static int nfc_request_resources()
   	printk("pn544_firm request error!");
   	return -1;
   }
-  iomux_set(GPIO0_D3);
-  //rk30_mux_api_set(GPIO0D3_I2S22CHLRCKTX_SMCADVN_NAME, GPIO0D_GPIO0D3);
+  
   gpio_pull_updown(NFC_MODE_SELECT, GPIOPullDown);//pulldown
   gpio_direction_output(NFC_MODE_SELECT, GPIO_LOW);
 	
@@ -2859,6 +2858,16 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 {
     .type           = "ft5506_q910_ipad3",
     .addr           = 0x40,
+    .flags          = 0,
+    .irq            = RK30_PIN1_PB7,
+    .platform_data = &ft5506_info,
+},
+#endif
+
+#if defined (CONFIG_TOUCHSCREEN_FT5506)
+{
+    .type           = "ft5506_c5",
+    .addr           = 0x38,
     .flags          = 0,
     .irq            = RK30_PIN1_PB7,
     .platform_data = &ft5506_info,
@@ -3280,8 +3289,8 @@ static struct cpufreq_frequency_table dvfs_ddr_table_volt_level0[] = {
 	{.frequency = 200 * 1000 + DDR_FREQ_SUSPEND,    .index = 950 * 1000},
 	{.frequency = 300 * 1000 + DDR_FREQ_NORMAL,      .index = 1000 * 1000},
 	{.frequency = 396 * 1000 + DDR_FREQ_NORMAL,     .index = 1100 * 1000},
-//{.frequency = 460 * 1000 + DDR_FREQ_DUALVIEW,     .index = 1150 * 1000},
-	{.frequency = 576 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
+	{.frequency = 460 * 1000 + DDR_FREQ_DUALVIEW,     .index = 1150 * 1000},
+//	{.frequency = 528 * 1000 + DDR_FREQ_NORMAL,     .index = 1200 * 1000},
 	{.frequency = CPUFREQ_TABLE_END},
 };
 

@@ -276,11 +276,14 @@ static void keys_adc_callback(struct adc_client *client, void *client_param, int
 	int i;
 	if(result > INVALID_ADVALUE && result < EMPTY_ADVALUE)
 		ddata->result = result;
+	
 	for (i = 0; i < ddata->nbuttons; i++) {
 		struct rk29_button_data *bdata = &ddata->data[i];
 		struct rk29_keys_button *button = bdata->button;
 		if(!button->adc_value)
 			continue;
+			
+		
 		if(result < button->adc_value + DRIFT_ADVALUE &&
 			result > button->adc_value - DRIFT_ADVALUE)
 			button->adc_state = 1;
