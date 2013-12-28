@@ -42,6 +42,11 @@ ADD_SCREEN(lcd_LTL090CL01W_mipi)
 
 /////
 #include "lcd_undef.h"
+#include "lcd_hx8394.c"
+ADD_SCREEN(lcd_hx8394)
+
+/////
+#include "lcd_undef.h"
 #include "lcd_hsd_1280x800_rk3188_rk616.c"
 ADD_SCREEN(lcd_hsd_1280x800_rk3188_rk616)
 
@@ -260,6 +265,8 @@ void set_lcd_info(struct rk29fb_screen *screen, struct rk29lcd_info *lcd_info )
 		SET_SCREEN_INFO(lcd_LTL090CL01W_mipi);
 	else if (panel_type == PANEL_MQ0801D)
 		SET_SCREEN_INFO(lcd_mq0801d);
+	else if (panel_type == PANEL_HX8394)
+		SET_SCREEN_INFO(lcd_hx8394);
 }
 
 size_t get_fb_size(void)
@@ -289,5 +296,7 @@ size_t get_fb_size(void)
 		return GET_SCREEN_INFO(lcd_LTL090CL01W_mipi);
 	else if (panel_type == PANEL_MQ0801D)
 		return GET_SCREEN_INFO(lcd_mq0801d);
+	else if (panel_type == PANEL_HX8394)
+		return GET_SCREEN_INFO(lcd_hx8394);
 	return 0;	
 }

@@ -779,6 +779,9 @@ static void q98v3_override()
 #define LCD_STBYB RK30_PIN1_PA7
 #define LCD_STBYB_VALUE GPIO_HIGH
 
+#define MIPI_RST RK30_PIN2_PA1
+#define MIPI_RST_VALUE GPIO_LOW
+
 // lcd_en 20ms
 // lcd_cs 10ms //AVDD and VGH,VGL
 static int rk29_backlight_io_init_c5(void)
@@ -839,6 +842,14 @@ static int rk29_backlight_pwm_resume_c5(void)
 static int rk_fb_io_init_c5(struct rk29_fb_setting_info *fb_setting)
 {
 	int ret;
+	iomux_set(GPIO2_A1);
+  ret = gpio_request(MIPI_RST, "mipi_rst");
+  if (ret != 0) {
+    printk("request mipi_rst fail.");
+    goto ret0;
+  }
+	gpio_direction_output(MIPI_RST, MIPI_RST_VALUE);
+	
 //step 1
   ret = gpio_request(LCD_EN_PIN_C5, "led_en");
   if (ret != 0) {
@@ -868,6 +879,8 @@ static int rk_fb_io_init_c5(struct rk29_fb_setting_info *fb_setting)
   }
 	gpio_direction_output(LCD_CS_PIN_C5, LCD_CS_VALUE_C5);
 	
+	mdelay(1);
+	gpio_direction_output(MIPI_RST, !MIPI_RST_VALUE);
 	mdelay(100);
 	//step 3
 ret0:
@@ -877,7 +890,7 @@ ret0:
 static int rk_fb_io_disable_c5(void)
 {
 	gpio_direction_output(LCD_STBYB, !LCD_STBYB_VALUE);
-	
+	gpio_direction_output(MIPI_RST, MIPI_RST_VALUE);
 	msleep(100);
   gpio_direction_output(LCD_CS_PIN_C5, !LCD_CS_VALUE_C5); //avdd vgh vgl
   gpio_direction_output(LCD_EN_PIN_C5, !LCD_EN_VALUE_C5); //vdd
@@ -890,6 +903,8 @@ static int rk_fb_io_enable_c5(void)
 	gpio_direction_output(LCD_STBYB, LCD_STBYB_VALUE);
 	msleep(10);
 	gpio_direction_output(LCD_CS_PIN_C5, LCD_CS_VALUE_C5);
+	msleep(1);
+	gpio_direction_output(MIPI_RST, MIPI_RST_VALUE);
 	msleep(10);
 	
 	return 0;
@@ -900,7 +915,6 @@ static void control_usb_charging(int mode)
 {
 	gpio_request(CHARGE_SET_PIN, NULL);
 	gpio_direction_output(CHARGE_SET_PIN, GPIO_LOW);
-	printk("charge current pin set %d\n",mode);
 	gpio_set_value(CHARGE_SET_PIN, mode?GPIO_HIGH:GPIO_LOW);
 	gpio_free(CHARGE_SET_PIN);
 
@@ -1015,6 +1029,8 @@ static void c5_override()
   rk29_keys_pdata.nbuttons	= ARRAY_SIZE(c5_key_button);
   iomux_set(GPIO2_B2);
   iomux_set(GPIO2_B3);
+  
+  default_sdmmc0_data.det_pin_info.io = INVALID_GPIO;
 }
 
 int board_use_rk616_codec()
@@ -1071,6 +1087,9 @@ int get_host_drv_pin()
 
 int get_otg_drv_pin()
 {
+	if (board_type == BOARD_C5)
+		return INVALID_GPIO;
+		
 	return RK30_PIN3_PD5;
 }
 
@@ -1135,3 +1154,39 @@ static void boards_override()
 	codec_override();
 	camera_dynamic_init();
 }
+
+///////////////////////////////////////////////////////////
+#include <linux/adc.h>
+
+static void wld_adc_callback(struct adc_client *client, void *param, int result)
+{
+	
+}
+
+static void c5_lcd_detect()
+{
+	if (board_type != BOARD_C5)
+		return;
+
+	struct adc_client	*client;
+	client = adc_register(2, wld_adc_callback, NULL);
+
+	if (!client) {
+		printk("adc_register failed\n");
+		return;
+	}
+			
+	int adc_val = adc_sync_read(client);
+	if (adc_val < 10) {
+		panel_type = PANEL_HX8394;	
+	} else {
+		panel_type = PANEL_MQ0801D;
+	}
+}
+
+static int  __init wld_early_detect(void)
+{
+	c5_lcd_detect();
+}
+
+subsys_initcall_sync(wld_early_detect);

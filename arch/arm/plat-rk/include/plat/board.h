@@ -589,6 +589,7 @@ enum
   PANEL_LTL089CL02W,
   PANEL_LTL090CL01W,
   PANEL_MQ0801D,
+  PANEL_HX8394,
 };
 
 int get_board_type();

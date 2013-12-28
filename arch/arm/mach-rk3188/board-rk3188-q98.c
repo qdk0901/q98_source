@@ -2722,7 +2722,6 @@ static int nfc_request_resources()
 		return -1;
 	}
 	
-	//rk30_mux_api_set(GPIO0D4_I2S22CHSDI_SMCADDR0_NAME, GPIO0D_GPIO0D4);
 	gpio_pull_updown(NFC_IRQ_PIN, GPIOPullDown);
 	gpio_direction_input(NFC_IRQ_PIN);
 	
@@ -2941,7 +2940,7 @@ static struct i2c_board_info __initdata i2c2_info[] = {
 #if defined(CONFIG_NFC_DEVICES)
 	{
 		I2C_BOARD_INFO(PN544_DRIVER_NAME, PN544_I2C_ADDR),
-		.irq = RK30_PIN0_PD6,
+		.irq = RK30_PIN1_PB4,
 		.platform_data = &pn544_data,
 	}
 #endif
